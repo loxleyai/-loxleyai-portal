@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loxley AI — Corridor Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────────── */
+:root {
+  --black:      #080810;
+  --charcoal:   #12121f;
+  --navy:       #15152a;
+  --surface:    #1a1a2e;
+  --surface-2:  #20203a;
+  --surface-3:  #282845;
+  --border:     rgba(201,168,76,0.10);
+  --border-mid: rgba(201,168,76,0.22);
+  --gold:       #c9a84c;
+  --gold-light: #e8cf82;
+  --gold-dim:   rgba(201,168,76,0.12);
+  --gold-glow:  rgba(201,168,76,0.20);
+  --teal:       #0d9488;
+  --teal-dim:   rgba(13,148,136,0.15);
+  --green:      #22c55e;
+  --green-dim:  rgba(34,197,94,0.12);
+  --amber:      #f59e0b;
+  --amber-dim:  rgba(245,158,11,0.12);
+  --red:        #ef4444;
+  --text:       #e8e6f0;
+  --text-2:     #a8a6b8;
+  --text-3:     #6a6880;
+  --r:          10px;
+  --r-lg:       16px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  font-family:'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  line-height:1.5;
+  overflow-x:hidden;
+}
+/* ─────────────────────────────────────────────
+   VIEWS — only one visible at a time
+───────────────────────────────────────────── */
+.view { display:none; min-height:100vh; }
+.view.active { display:block; }
+/* ─────────────────────────────────────────────
+   LOGIN VIEW
+───────────────────────────────────────────── */
+#loginView {
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 800px 600px at 60% 40%, rgba(201,168,76,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 20% 80%, rgba(13,148,136,0.04) 0%, transparent 70%),
+    var(--black);
+}
+#loginView.active { display:flex; }
+.login-box {
+  width: 420px;
+  animation: fade-up 0.5s ease both;
+}
+.login-brand {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom: 48px;
+}
+.login-mark {
+  width:44px; height:44px;
+  background: var(--gold);
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Mono', monospace;
+  font-weight:700; font-size:17px;
+  color: var(--black);
+}
+.login-brand-text h1 {
+  font-size:18px; font-weight:700;
+  color: var(--gold);
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.login-brand-text p {
+  font-size:12px; color: var(--text-3);
+  letter-spacing:0.5px;
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 36px;
+}
+.login-title {
+  font-size:20px; font-weight:700;
+  color: var(--text);
+  margin-bottom:6px;
+}
+.login-sub {
+  font-size:13px; color: var(--text-3);
+  margin-bottom:28px;
+  line-height:1.5;
+}
+.input-group {
+  margin-bottom: 16px;
+}
+.input-label {
+  display:block;
+  font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1.2px;
+  color: var(--text-3);
+  margin-bottom:8px;
+}
+.code-input {
+  width:100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--r);
+  padding: 13px 16px;
+  font-family:'Space Mono', monospace;
+  font-size:15px; font-weight:700;
+  color: var(--gold);
+  letter-spacing:2px;
+  outline:none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.code-input::placeholder {
+  color: var(--text-3);
+  letter-spacing:1px;
+  font-weight:400;
+}
+.code-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+.code-input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+  animation: shake 0.3s ease;
+}
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20% { transform:translateX(-6px); }
+  60% { transform:translateX(6px); }
+}
+.login-btn {
+  width:100%;
+  padding:14px;
+  background: var(--gold);
+  border: none;
+  border-radius: var(--r);
+  font-family:'DM Sans', sans-serif;
+  font-size:14px; font-weight:700;
+  color: var(--black);
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition: background 0.15s, transform 0.1s;
+  margin-top:6px;
+}
+.login-btn:hover { background: var(--gold-light); }
+.login-btn:active { transform:scale(0.99); }
+.login-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.login-error {
+  font-size:12px; color: var(--red);
+  margin-top:10px;
+  min-height:18px;
+  text-align:center;
+}
+.login-trial {
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  font-size:11px; color: var(--text-3);
+  text-align:center;
+  line-height:1.6;
+}
+/* ─────────────────────────────────────────────
+   DASHBOARD VIEW
+───────────────────────────────────────────── */
+.nav {
+  position:sticky; top:0; z-index:100;
+  background: rgba(8,8,16,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand { display:flex; align-items:center; gap:14px; }
+.nav-mark {
+  width:36px; height:36px;
+  background: var(--gold); border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Mono', monospace;
+  font-weight:700; font-size:14px; color: var(--black);
+}
+.nav-title { font-size:15px; font-weight:600; color: var(--gold); letter-spacing:1.8px; text-transform:uppercase; }
+.nav-subtitle { font-size:11px; color: var(--text-3); letter-spacing:0.5px; }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-badge {
+  font-family:'Space Mono', monospace; font-size:10px;
+  color: var(--text-3); letter-spacing:1px; text-transform:uppercase;
+  padding:4px 10px; border:1px solid var(--border); border-radius:4px;
+}
+.nav-badge span { color: var(--green); margin-right:5px; }
+.nav-signout {
+  font-size:12px; color: var(--text-3);
+  cursor:pointer; transition:color 0.15s;
+  background:none; border:none; font-family:'DM Sans', sans-serif;
+  padding: 4px 8px;
+}
+.nav-signout:hover { color: var(--gold); }
+.nav-user {
+  width:32px; height:32px; border-radius:50%;
+  background: var(--surface-2); border:1px solid var(--border-mid);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color: var(--gold);
+}
+.layout {
+  display:grid; grid-template-columns:220px 1fr;
+  min-height:calc(100vh - 64px);
+}
+/* SIDEBAR */
+.sidebar {
+  background: var(--charcoal);
+  border-right:1px solid var(--border);
+  padding:24px 0;
+  position:sticky; top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+}
+.sidebar-section { padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+.sidebar-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-3); margin-bottom:10px; padding:0 4px; }
+.sidebar-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:7px;
+  cursor:pointer; font-size:13px; font-weight:500; color:var(--text-2);
+  transition:all 0.15s; margin-bottom:2px; border:1px solid transparent;
+}
+.sidebar-item:hover { background:var(--surface-2); color:var(--text); }
+.sidebar-item.active { background:var(--gold-dim); color:var(--gold); border-color:var(--border-mid); }
+.sidebar-item-icon { width:18px; font-size:14px; opacity:0.8; }
+.sidebar-corridor {
+  padding:8px 12px; border-radius:7px;
+  cursor:pointer; transition:all 0.15s; margin-bottom:4px;
+}
+.sidebar-corridor:hover { background:var(--surface-2); }
+.sidebar-corridor.active { background:var(--gold-dim); }
+.sidebar-corridor-name { font-size:12px; font-weight:600; color:var(--text); margin-bottom:3px; }
+.sidebar-corridor.active .sidebar-corridor-name { color:var(--gold); }
+.sidebar-corridor-score { display:flex; align-items:center; gap:6px; }
+.score-bar-track { flex:1; height:3px; background:var(--surface-3); border-radius:2px; overflow:hidden; }
+.score-bar-fill { height:100%; border-radius:2px; background:var(--gold); }
+.score-num { font-family:'Space Mono', monospace; font-size:10px; color:var(--gold); font-weight:700; }
+/* MAIN */
+.main { padding:32px 40px 60px; }
+.page-header { margin-bottom:28px; display:flex; align-items:flex-end; justify-content:space-between; }
+.page-title { font-size:26px; font-weight:700; color:var(--text); letter-spacing:-0.5px; }
+.page-title span { color:var(--gold); }
+.page-meta { font-size:13px; color:var(--text-3); margin-top:4px; }
+.header-actions { display:flex; gap:10px; }
+.btn { padding:9px 18px; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:'DM Sans', sans-serif; letter-spacing:0.3px; }
+.btn-ghost { background:transparent; border:1px solid var(--border-mid); color:var(--text-2); }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+.btn-primary { background:var(--gold); border:1px solid var(--gold); color:var(--black); }
+.btn-primary:hover { background:var(--gold-light); }
+/* METRICS */
+.metrics-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.metric-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 22px; position:relative; overflow:hidden;
+  transition:border-color 0.2s, transform 0.15s;
+  animation: fade-up 0.35s ease both;
+}
+.metric-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent, var(--gold)); opacity:0.6; }
+.metric-card:hover { border-color:var(--border-mid); transform:translateY(-1px); }
+.metric-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-3); margin-bottom:10px; }
+.metric-value { font-family:'Space Mono', monospace; font-size:30px; font-weight:700; color:var(--gold); line-height:1; margin-bottom:6px; }
+.metric-value.teal { color:var(--teal); }
+.metric-value.green { color:var(--green); }
+.metric-value.amber { color:var(--amber); }
+.metric-sub { font-size:12px; color:var(--text-3); }
+.metric-sub strong { color:var(--text-2); font-weight:500; }
+/* CORRIDOR CARDS */
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.section-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-3); }
+.corridors-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:28px; }
+.corridor-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:24px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+  animation: fade-up 0.4s ease both;
+}
+.corridor-card::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:120px; height:120px; border-radius:50%;
+  background:radial-gradient(circle, var(--glow, rgba(201,168,76,0.08)) 0%, transparent 70%);
+  pointer-events:none;
+}
+.corridor-card:hover { border-color:var(--border-mid); background:var(--surface-2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+.corridor-card.selected { border-color:var(--gold); background:var(--surface-2); box-shadow:0 0 0 1px var(--gold-dim), 0 8px 32px rgba(0,0,0,0.4); }
+.corridor-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
+.corridor-tag { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:4px 8px; border-radius:4px; background:var(--gold-dim); color:var(--gold); border:1px solid var(--border-mid); }
+.corridor-tag.teal { background:var(--teal-dim); color:var(--teal); border-color:rgba(13,148,136,0.25); }
+.corridor-tag.green { background:var(--green-dim); color:var(--green); border-color:rgba(34,197,94,0.25); }
+.score-ring { position:relative; width:64px; height:64px; }
+.score-ring svg { transform:rotate(-90deg); }
+.score-ring-bg { fill:none; stroke:var(--surface-3); stroke-width:5; }
+.score-ring-fill { fill:none; stroke-width:5; stroke-linecap:round; stroke-dasharray:170; stroke-dashoffset:170; transition:stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1); }
+.score-ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.score-ring-num { font-family:'Space Mono', monospace; font-size:16px; font-weight:700; line-height:1; color:var(--gold); }
+.score-ring-sub { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-3); margin-top:1px; }
+.corridor-name { font-size:17px; font-weight:700; color:var(--text); margin-bottom:4px; line-height:1.2; }
+.corridor-location { font-size:12px; color:var(--text-3); margin-bottom:18px; }
+.corridor-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+.stat-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); margin-bottom:3px; }
+.stat-value { font-family:'Space Mono', monospace; font-size:13px; font-weight:700; color:var(--text); }
+.stat-value.gold { color:var(--gold); }
+.stat-value.teal { color:var(--teal); }
+.stat-value.green { color:var(--green); }
+.stat-value.amber { color:var(--amber); }
+.corridor-footer { padding-top:16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.corridor-alerts { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-3); }
+.alert-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); animation:pulse-dot 2s ease-in-out infinite; }
+.alert-dot.green { background:var(--green); animation:none; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.corridor-cta { font-size:11px; font-weight:600; color:var(--gold); }
+/* DETAIL PANEL */
+.detail-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; margin-bottom:28px; animation:panel-in 0.3s ease; }
+@keyframes panel-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.detail-header { padding:24px 28px; border-bottom:1px solid var(--border); background:var(--surface-2); display:flex; align-items:center; justify-content:space-between; }
+.detail-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.detail-subtitle { font-size:12px; color:var(--text-3); }
+.detail-score-num { font-family:'Space Mono', monospace; font-size:36px; font-weight:700; color:var(--gold); line-height:1; }
+.detail-score-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-3); margin-top:3px; text-align:right; }
+.detail-body { display:grid; grid-template-columns:1fr 1fr; }
+.detail-left { padding:24px 28px; border-right:1px solid var(--border); }
+.detail-right { padding:24px 28px; }
+.detail-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-3); margin-bottom:18px; }
+.factor-list { display:flex; flex-direction:column; gap:14px; }
+.factor-row { display:grid; grid-template-columns:1fr 160px 36px; align-items:center; gap:12px; }
+.factor-name { font-size:12px; font-weight:600; color:var(--text-2); }
+.factor-weight { font-size:10px; color:var(--text-3); margin-top:2px; }
+.factor-track { height:6px; border-radius:3px; background:var(--surface-3); overflow:hidden; }
+.factor-fill { height:100%; border-radius:3px; background:linear-gradient(90deg, var(--teal), var(--gold)); width:0%; transition:width 1s cubic-bezier(0.4,0,0.2,1); }
+.factor-score { font-family:'Space Mono', monospace; font-size:12px; font-weight:700; color:var(--text); text-align:right; }
+/* OPPORTUNITIES */
+.opportunities-section { margin-bottom:28px; }
+.opportunities-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.opp-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:18px; transition:all 0.15s; }
+.opp-card:hover { border-color:var(--border-mid); background:var(--surface-2); }
+.opp-type { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--teal); margin-bottom:8px; }
+.opp-name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; line-height:1.3; }
+.opp-desc { font-size:12px; color:var(--text-3); margin-bottom:14px; line-height:1.5; }
+.opp-meta { display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid var(--border); }
+.opp-yield { font-family:'Space Mono', monospace; font-size:14px; font-weight:700; color:var(--green); }
+.opp-horizon { font-size:10px; color:var(--text-3); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+/* BOTTOM ROW */
+.bottom-row { display:grid; grid-template-columns:1fr 340px; gap:20px; }
+.chart-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:22px; }
+.chart-card h3 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-3); margin-bottom:20px; }
+.chart-card canvas { max-height:200px; }
+.alerts-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.alerts-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.alerts-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-3); }
+.alerts-count { font-family:'Space Mono', monospace; font-size:11px; background:var(--amber-dim); color:var(--amber); padding:2px 8px; border-radius:4px; font-weight:700; }
+.alert-item { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; gap:12px; transition:background 0.15s; }
+.alert-item:hover { background:var(--surface-2); }
+.alert-item:last-child { border-bottom:none; }
+.alert-indicator { width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+.alert-indicator.new { background:var(--amber); }
+.alert-indicator.info { background:var(--teal); }
+.alert-indicator.positive { background:var(--green); }
+.alert-corridor { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--gold); margin-bottom:3px; }
+.alert-text { font-size:12px; color:var(--text-2); line-height:1.4; margin-bottom:4px; }
+.alert-time { font-size:10px; color:var(--text-3); }
+/* UTILS */
+@keyframes fade-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.corridor-card:nth-child(1){animation-delay:0.05s}
+.corridor-card:nth-child(2){animation-delay:0.12s}
+.corridor-card:nth-child(3){animation-delay:0.19s}
+.metric-card:nth-child(1){animation-delay:0.0s}
+.metric-card:nth-child(2){animation-delay:0.06s}
+.metric-card:nth-child(3){animation-delay:0.12s}
+.metric-card:nth-child(4){animation-delay:0.18s}
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .corridors-grid,.opportunities-grid{grid-template-columns:1fr}
+  .detail-body{grid-template-columns:1fr}
+  .metrics-row{grid-template-columns:repeat(2,1fr)}
+  .bottom-row{grid-template-columns:1fr}
+  .main,.nav{padding-left:20px;padding-right:20px}
+}
+</style>
+</head>
+<body>
+<!-- ════════════════════════════════════════
+     LOGIN VIEW
+════════════════════════════════════════ -->
+<div class="view active" id="loginView">
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-mark">HL</div>
+      <div class="login-brand-text">
+        <h1>Loxley AI</h1>
+        <p>Corridor Intelligence Portal</p>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="login-title">Access Intelligence</div>
+      <div class="login-sub">Enter your access code to view corridor intelligence and Watkins Scores for your subscribed markets.</div>
+      <div class="input-group">
+        <label class="input-label" for="accessCode">Access Code</label>
+        <input
+          class="code-input"
+          id="accessCode"
+          type="password"
+          placeholder="••••••••••••"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        >
+      </div>
+      <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+        Authenticate
+      </button>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-trial">
+        Subscriber access · Q1 2026<br>
+        Questions? <a href="mailto:parker@loxleyai.io" style="color:var(--gold);text-decoration:none;">parker@loxleyai.io</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ════════════════════════════════════════
+     DASHBOARD VIEW
+════════════════════════════════════════ -->
+<div class="view" id="dashView">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-mark">HL</div>
+      <div>
+        <div class="nav-title">Loxley AI</div>
+        <div class="nav-subtitle">Corridor Intelligence Portal</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-badge"><span>●</span>Live · Q1 2026</div>
+      <button class="nav-signout" onclick="handleSignout()">Sign out</button>
+      <div class="nav-user">DL</div>
+    </div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <div class="sidebar-item active"><div class="sidebar-item-icon">◈</div> Corridors</div>
+        <div class="sidebar-item"><div class="sidebar-item-icon">⊞</div> Investments</div>
+        <div class="sidebar-item"><div class="sidebar-item-icon">◎</div> Alerts</div>
+        <div class="sidebar-item"><div class="sidebar-item-icon">◷</div> Reports</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Active Corridors</div>
+        <div class="sidebar-corridor active" onclick="selectCorridor(0)">
+          <div class="sidebar-corridor-name">Phoenix Semiconductor</div>
+          <div class="sidebar-corridor-score">
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:87%"></div></div>
+            <div class="score-num">87</div>
+          </div>
+        </div>
+        <div class="sidebar-corridor" onclick="selectCorridor(1)">
+          <div class="sidebar-corridor-name">Dayton Defense</div>
+          <div class="sidebar-corridor-score">
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:85%"></div></div>
+            <div class="score-num">85</div>
+          </div>
+        </div>
+        <div class="sidebar-corridor" onclick="selectCorridor(2)">
+          <div class="sidebar-corridor-name">I-270 East Columbus</div>
+          <div class="sidebar-corridor-score">
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:79%"></div></div>
+            <div class="score-num">79</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 20px;">
+        <div class="sidebar-label">Pipeline</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 4px;line-height:1.6;">
+          Charleston–Savannah<br>
+          <span style="font-style:italic;font-size:11px;">Scanning Q2 2026</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 4px;line-height:1.6;">
+          Huntsville–Decatur<br>
+          <span style="font-style:italic;font-size:11px;">Scanning Q2 2026</span>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Corridor <span>Intelligence</span></div>
+          <div class="page-meta" id="pageMeta">3 active corridors · Q1 2026 · Watkins Methodology v2.1</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost">Export Brief</button>
+          <button class="btn btn-primary">+ Request Corridor</button>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-card" style="--accent:var(--gold)"><div class="metric-label">Corridors Active</div><div class="metric-value">3</div><div class="metric-sub"><strong>+2 scanning</strong> · Q2 2026</div></div>
+        <div class="metric-card" style="--accent:var(--teal)"><div class="metric-label">Avg Watkins Score</div><div class="metric-value teal">83.7</div><div class="metric-sub">Portfolio composite</div></div>
+        <div class="metric-card" style="--accent:var(--green)"><div class="metric-label">Highest Opportunity</div><div class="metric-value green">87</div><div class="metric-sub">Phoenix Semiconductor</div></div>
+        <div class="metric-card" style="--accent:var(--amber)"><div class="metric-label">Active Alerts</div><div class="metric-value amber">4</div><div class="metric-sub"><strong>2 new</strong> since last brief</div></div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Watkins Scored Corridors</div>
+        <div style="font-size:11px;color:var(--text-3)">Select a corridor to expand detail</div>
+      </div>
+      <div class="corridors-grid" id="corridorGrid"></div>
+      <div class="detail-panel" id="detailPanel"></div>
+      <div class="opportunities-section" id="oppSection"></div>
+      <div class="bottom-row">
+        <div class="chart-card">
+          <h3>Watkins Score Comparison — All Corridors</h3>
+          <canvas id="chartCompare"></canvas>
+        </div>
+        <div class="alerts-panel">
+          <div class="alerts-header">
+            <div class="alerts-title">Intelligence Alerts</div>
+            <div class="alerts-count">4</div>
+          </div>
+          <div class="alert-item"><div class="alert-indicator new" style="margin-top:4px;flex-shrink:0"></div><div><div class="alert-corridor">Phoenix Semiconductor</div><div class="alert-text">TSMC Phase 2 groundbreaking confirmed Q3 2026. $6.6B additional capex announced.</div><div class="alert-time">2 hours ago</div></div></div>
+          <div class="alert-item"><div class="alert-indicator new" style="margin-top:4px;flex-shrink:0"></div><div><div class="alert-corridor">Dayton Defense</div><div class="alert-text">WPAFB contract awards up 18% YoY. New $1.2B logistics contract posted on SAM.gov.</div><div class="alert-time">6 hours ago</div></div></div>
+          <div class="alert-item"><div class="alert-indicator info" style="margin-top:4px;flex-shrink:0"></div><div><div class="alert-corridor">I-270 East Columbus</div><div class="alert-text">Intel fab workforce hiring ahead of schedule. 1,800 direct hires projected Q2.</div><div class="alert-time">Yesterday</div></div></div>
+          <div class="alert-item"><div class="alert-indicator positive" style="margin-top:4px;flex-shrink:0"></div><div><div class="alert-corridor">Phoenix Semiconductor</div><div class="alert-text">Corridor RevPAR up 11.4% Q4 2025 vs national average of 3.1%.</div><div class="alert-time">3 days ago</div></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+/* ═══════════════════════════════════════════
+   CONFIGURATION — edit these two lines
+═══════════════════════════════════════════ */
+// Your Cloudflare Worker URL (from the worker you already deployed)
+// Replace with your actual worker URL, e.g. https://loxley-portal.YOUR-SUBDOMAIN.workers.dev
+const WORKER_URL = "https://loxley-portal.workers.dev";
+// Fallback: if the worker is not yet deployed, use local code validation
+// Set LOCAL_CODES to your codes as a comma-separated string (temporary, replace with worker)
+const LOCAL_CODES = "loxley2026,margaret2026";
+/* ═══════════════════════════════════════════
+   AUTH LOGIC
+═══════════════════════════════════════════ */
+async function handleLogin() {
+  const input = document.getElementById("accessCode");
+  const btn = document.getElementById("loginBtn");
+  const errEl = document.getElementById("loginError");
+  const code = input.value.trim().toLowerCase();
+  if (!code) {
+    showError("Please enter your access code.");
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Authenticating…";
+  errEl.textContent = "";
+  input.classList.remove("error");
+  try {
+    // Try the Cloudflare Worker first
+    const res = await fetch(WORKER_URL + "/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.authenticated) {
+      onAuthSuccess(data);
+      return;
+    } else {
+      throw new Error(data.message || "Invalid access code.");
+    }
+  } catch (err) {
+    // If worker isn't deployed yet, fall back to local validation
+    if (LOCAL_CODES.split(",").map(c => c.trim().toLowerCase()).includes(code)) {
+      onAuthSuccess({ trial: { remaining: 90 } });
+      return;
+    }
+    showError("Invalid access code. Contact parker@loxleyai.io for access.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Authenticate";
+  }
+}
+function showError(msg) {
+  const errEl = document.getElementById("loginError");
+  const input = document.getElementById("accessCode");
+  errEl.textContent = msg;
+  input.classList.add("error");
+  setTimeout(() => input.classList.remove("error"), 600);
+}
+function onAuthSuccess(data) {
+  // Store in sessionStorage (clears when tab is closed — intentional)
+  sessionStorage.setItem("lox_auth", "1");
+  if (data.trial) sessionStorage.setItem("lox_trial_remaining", data.trial.remaining);
+  showDashboard();
+}
+function handleSignout() {
+  sessionStorage.removeItem("lox_auth");
+  sessionStorage.removeItem("lox_trial_remaining");
+  document.getElementById("dashView").classList.remove("active");
+  document.getElementById("loginView").classList.add("active");
+  document.getElementById("accessCode").value = "";
+}
+function showDashboard() {
+  document.getElementById("loginView").classList.remove("active");
+  const dash = document.getElementById("dashView");
+  dash.classList.add("active");
+  const remaining = sessionStorage.getItem("lox_trial_remaining");
+  if (remaining) {
+    document.getElementById("pageMeta").textContent =
+      `3 active corridors · Q1 2026 · Watkins Methodology v2.1 · ${remaining} days remaining`;
+  }
+  // Init dashboard on first show
+  if (!dash.dataset.initialized) {
+    dash.dataset.initialized = "1";
+    renderCorridorCards();
+    renderDetailPanel();
+    renderOpportunities();
+    renderCompareChart();
+  }
+}
+// Check session on load
+window.addEventListener("DOMContentLoaded", () => {
+  if (sessionStorage.getItem("lox_auth")) {
+    showDashboard();
+  }
+  // Allow Enter key on input
+  document.getElementById("accessCode").addEventListener("keydown", e => {
+    if (e.key === "Enter") handleLogin();
+  });
+});
+/* ═══════════════════════════════════════════
+   CORRIDOR DATA
+═══════════════════════════════════════════ */
+const CORRIDORS = [
+  {
+    id:"phoenix", name:"Phoenix Semiconductor", location:"Greater Phoenix MSA · AZ",
+    score:87, tag:"Semiconductor", tagClass:"teal",
+    glow:"rgba(13,148,136,0.12)", ringStroke:"#0d9488",
+    alerts:2, alertNew:true,
+    stats:[{l:"Federal Pipeline",v:"$42.1B",c:"teal"},{l:"Workforce Gap",v:"14,200",c:""},{l:"RevPAR Delta",v:"+11.4%",c:"green"},{l:"Supply Lag",v:"18 mo",c:"amber"}],
+    factors:[{n:"Industrial Pipeline",w:"30%",s:92},{n:"Supply Gap",w:"25%",s:88},{n:"Demand Timing",w:"20%",s:85},{n:"Market Accessibility",w:"15%",s:80},{n:"Execution Risk",w:"10%",s:75}],
+    thesis:"TSMC's $65B Arizona investment creates a sustained 24–36 month hospitality demand wave driven by 12,000+ construction workers, 4,500 permanent technical staff, and a deep vendor ecosystem. The corridor's existing supply is structurally misaligned — extended-stay inventory is operating at 94% occupancy with no new pipeline delivering before 2027.",
+    opps:[{t:"Primary Target",n:"Extended-Stay Repositioning",d:"Acquire underperforming select-service assets within 8mi of TSMC Fab 21. Reposition to extended-stay for construction workforce.",y:"8.2% YOC",h:"12–18 mo"},{t:"Value-Add",n:"Corridor Frontage F&B",d:"Ground-floor F&B in workforce corridors along I-10 and Loop 303. High captive demand from shift workers.",y:"9.1% YOC",h:"18–24 mo"},{t:"Development",n:"Modular Workforce Housing",d:"Site adjacent to supplier park announcements. Pre-lease to tier-1 contractors before groundbreaking.",y:"11.4% YOC",h:"24–36 mo"}]
+  },
+  {
+    id:"dayton", name:"Dayton Defense", location:"Greater Dayton–Springfield MSA · OH",
+    score:85, tag:"Defense", tagClass:"",
+    glow:"rgba(201,168,76,0.10)", ringStroke:"#c9a84c",
+    alerts:1, alertNew:true,
+    stats:[{l:"Federal Pipeline",v:"$28.4B",c:"gold"},{l:"Workforce Gap",v:"9,800",c:""},{l:"RevPAR Delta",v:"+7.2%",c:"green"},{l:"Supply Lag",v:"22 mo",c:"amber"}],
+    factors:[{n:"Industrial Pipeline",w:"30%",s:88},{n:"Supply Gap",w:"25%",s:84},{n:"Demand Timing",w:"20%",s:90},{n:"Market Accessibility",w:"15%",s:78},{n:"Execution Risk",w:"10%",s:72}],
+    thesis:"Wright-Patterson AFB anchors the most concentrated defense intelligence and aerospace R&D cluster in the U.S. The base supports 30,000 personnel and generates $8.1B in annual direct economic impact. Demand timing is optimal — the corridor is mid-cycle with 18 months before new competitive supply enters.",
+    opps:[{t:"Primary Target",n:"WPAFB Perimeter Hotels",d:"Select-service assets on Airbase Road and Harshman corridor. Defense contractor per diem demand is structural, not cyclical.",y:"7.8% YOC",h:"9–15 mo"},{t:"Value-Add",n:"I-75 Corridor Repositioning",d:"Mid-scale properties with deferred PIP. Renovation to extended-stay unlocks +$18 ADR premium from defense vendors.",y:"8.6% YOC",h:"12–18 mo"},{t:"Stabilized",n:"Downtown Dayton Mixed-Use",d:"Defense ecosystem spillover into urban core. Recent CityLink development anchors demand.",y:"6.9% YOC",h:"Immediate"}]
+  },
+  {
+    id:"columbus", name:"I-270 East Columbus", location:"Columbus MSA · Licking County Corridor · OH",
+    score:79, tag:"Tech-Industrial", tagClass:"green",
+    glow:"rgba(34,197,94,0.08)", ringStroke:"#22c55e",
+    alerts:1, alertNew:false,
+    stats:[{l:"Federal Pipeline",v:"$22.6B",c:"green"},{l:"Workforce Gap",v:"7,400",c:""},{l:"RevPAR Delta",v:"+5.8%",c:"green"},{l:"Supply Lag",v:"14 mo",c:"amber"}],
+    factors:[{n:"Industrial Pipeline",w:"30%",s:80},{n:"Supply Gap",w:"25%",s:82},{n:"Demand Timing",w:"20%",s:84},{n:"Market Accessibility",w:"15%",s:76},{n:"Execution Risk",w:"10%",s:65}],
+    thesis:"Intel's $28B fab complex in New Albany creates a secular demand shift for the I-270 East corridor. Supply lag is the tightest of the three tracked corridors at 14 months — execution risk is elevated due to construction timeline uncertainty, but the demand signal is clear and state-level workforce development support is strong.",
+    opps:[{t:"Primary Target",n:"New Albany Supply Gap",d:"No extended-stay product within 5mi of the Intel fab site. First-mover advantage for construction workforce capture.",y:"8.9% YOC",h:"12–18 mo"},{t:"Value-Add",n:"Pataskala Corridor Assets",d:"Older select-service properties on Rt. 40. Intel vendor traffic creating rate compression in the segment.",y:"7.4% YOC",h:"6–12 mo"},{t:"Stabilized",n:"Easton Town Center Adjacent",d:"Corporate demand anchor from Intel admin offices. Stable cash flow with upside from rate recovery.",y:"6.4% YOC",h:"Immediate"}]
+  }
+];
+let selectedIdx = 0;
+function renderCorridorCards() {
+  document.getElementById("corridorGrid").innerHTML = CORRIDORS.map((c,i) => `
+    <div class="corridor-card ${i===selectedIdx?'selected':''}" style="--glow:${c.glow}" onclick="selectCorridor(${i})">
+      <div class="corridor-card-header">
+        <span class="corridor-tag ${c.tagClass}">${c.tag}</span>
+        <div class="score-ring">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle class="score-ring-bg" cx="32" cy="32" r="27"/>
+            <circle class="score-ring-fill" cx="32" cy="32" r="27"
+              stroke="${c.ringStroke}"
+              style="stroke-dashoffset:${170-(170*c.score/100)}"/>
+          </svg>
+          <div class="score-ring-label">
+            <div class="score-ring-num" style="color:${c.ringStroke}">${c.score}</div>
+            <div class="score-ring-sub">WCS</div>
+          </div>
+        </div>
+      </div>
+      <div class="corridor-name">${c.name}</div>
+      <div class="corridor-location">${c.location}</div>
+      <div class="corridor-stats">
+        ${c.stats.map(s=>`<div><div class="stat-label">${s.l}</div><div class="stat-value ${s.c}">${s.v}</div></div>`).join("")}
+      </div>
+      <div class="corridor-footer">
+        <div class="corridor-alerts"><div class="alert-dot ${c.alertNew?'':'green'}"></div>${c.alerts} alert${c.alerts!==1?'s':''}</div>
+        <div class="corridor-cta">View Analysis →</div>
+      </div>
+    </div>
+  `).join("");
+}
+function renderDetailPanel() {
+  const c = CORRIDORS[selectedIdx];
+  document.getElementById("detailPanel").innerHTML = `
+    <div class="detail-header">
+      <div><div class="detail-title">${c.name}</div><div class="detail-subtitle">${c.location} · Watkins Corridor Score Breakdown</div></div>
+      <div><div class="detail-score-num">${c.score}</div><div class="detail-score-label">Watkins Score</div></div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-left">
+        <div class="detail-section-title">Five-Factor Breakdown</div>
+        <div class="factor-list">
+          ${c.factors.map((f,fi)=>`
+            <div class="factor-row">
+              <div><div class="factor-name">${f.n}</div><div class="factor-weight">Weight: ${f.w}</div></div>
+              <div class="factor-track"><div class="factor-fill" id="ff-${fi}" style="width:0%"></div></div>
+              <div class="factor-score">${f.s}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <div class="detail-right">
+        <div class="detail-section-title">Investment Thesis</div>
+        <p style="font-size:13px;color:var(--text-2);line-height:1.7;">${c.thesis}</p>
+      </div>
+    </div>
+  `;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    c.factors.forEach((f,fi)=>{
+      const el = document.getElementById(`ff-${fi}`);
+      if (el) el.style.width = f.s + "%";
+    });
+  }));
+}
+function renderOpportunities() {
+  const c = CORRIDORS[selectedIdx];
+  document.getElementById("oppSection").innerHTML = `
+    <div class="section-header" style="margin-bottom:16px">
+      <div class="section-title">Investment Opportunities — ${c.name}</div>
+    </div>
+    <div class="opportunities-grid">
+      ${c.opps.map(o=>`
+        <div class="opp-card">
+          <div class="opp-type">${o.t}</div>
+          <div class="opp-name">${o.n}</div>
+          <div class="opp-desc">${o.d}</div>
+          <div class="opp-meta"><div class="opp-yield">${o.y}</div><div class="opp-horizon">${o.h}</div></div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+function selectCorridor(idx) {
+  selectedIdx = idx;
+  renderCorridorCards();
+  renderDetailPanel();
+  renderOpportunities();
+  document.querySelectorAll('.sidebar-corridor').forEach((el,i)=>el.classList.toggle('active',i===idx));
+}
+let compareChart = null;
+function renderCompareChart() {
+  if (compareChart) compareChart.destroy();
+  compareChart = new Chart(document.getElementById("chartCompare"), {
+    type:"radar",
+    data:{
+      labels:["Industrial Pipeline","Supply Gap","Demand Timing","Mkt Accessibility","Exec. Risk"],
+      datasets: CORRIDORS.map((c,i)=>({
+        label:c.name,
+        data:c.factors.map(f=>f.s),
+        backgroundColor:[
+          "rgba(13,148,136,0.08)","rgba(201,168,76,0.08)","rgba(34,197,94,0.08)"
+        ][i],
+        borderColor:[
+          "rgba(13,148,136,0.85)","rgba(201,168,76,0.85)","rgba(34,197,94,0.85)"
+        ][i],
+        borderWidth:2, pointRadius:3,
+        pointBackgroundColor:["rgba(13,148,136,0.85)","rgba(201,168,76,0.85)","rgba(34,197,94,0.85)"][i]
+      }))
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:"#8a8a9a", font:{family:"'DM Sans'",size:11}, padding:16 } } },
+      scales:{ r:{ min:50, max:100,
+        ticks:{color:"#6a6880",font:{size:9},stepSize:10,backdropColor:"transparent"},
+        grid:{color:"rgba(255,255,255,0.06)"}, pointLabels:{color:"#8a8a9a",font:{size:10}},
+        angleLines:{color:"rgba(255,255,255,0.05)"}
+      }}
+    }
+  });
+}
+</script>
+</body>
+</html>
