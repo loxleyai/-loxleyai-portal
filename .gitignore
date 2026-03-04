@@ -1,0 +1,11 @@
+# Vercel
+.vercel
+
+# Claude worktrees
+.claude/worktrees/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
