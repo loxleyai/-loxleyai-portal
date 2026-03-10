@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House of Loxley — The Difference Between a Map and a Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0b08;
+    --vellum: #f0ead8;
+    --espresso: #2a1f14;
+    --amber: #c8843a;
+    --gold: #e8b86d;
+    --warm-white: #faf7f2;
+    --muted: #7a6e61;
+    --border: rgba(200, 132, 58, 0.2);
+    --glow: rgba(200, 132, 58, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--vellum);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+  /* ── GRID OVERLAY ── */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,132,58,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,132,58,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+    animation: gridFade 3s ease forwards;
+  }
+  @keyframes gridFade {
+    0% { opacity: 0; }
+    40% { opacity: 1; }
+    100% { opacity: 0.4; }
+  }
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13, 11, 8, 0.85);
+    backdrop-filter: blur(20px);
+    animation: fadeDown 1s ease 0.5s both;
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .nav-wordmark {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--vellum);
+  }
+  .nav-wordmark span {
+    color: var(--amber);
+  }
+  .nav-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 10vw 80px;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero-coordinates {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 0.14em;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1s both;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 112px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin-bottom: 0;
+  }
+  .hero-headline .line {
+    display: block;
+    opacity: 0;
+    animation: revealLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-headline .line-1 { animation-delay: 1.4s; }
+  .hero-headline .line-2 { animation-delay: 1.65s; color: var(--amber); }
+  .hero-headline .line-3 { animation-delay: 1.9s; }
+  .hero-headline .line-4 { animation-delay: 2.15s; font-style: italic; color: var(--gold); }
+  @keyframes revealLine {
+    from { opacity: 0; transform: translateY(40px) skewY(2deg); }
+    to { opacity: 1; transform: translateY(0) skewY(0); }
+  }
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--amber);
+    margin: 48px 0;
+    opacity: 0;
+    animation: fadeIn 1s ease 2.6s both;
+  }
+  .hero-subtext {
+    max-width: 520px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(240, 234, 216, 0.7);
+    opacity: 0;
+    animation: fadeIn 1s ease 2.8s both;
+  }
+  .hero-subtext strong {
+    color: var(--vellum);
+    font-weight: 500;
+  }
+  /* Corner decoration */
+  .hero-corner {
+    position: absolute;
+    bottom: 60px;
+    right: 10vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3.2s both;
+  }
+  .hero-corner .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .hero-corner .value {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--amber);
+  }
+  .scroll-cue {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3.5s both;
+  }
+  .scroll-cue span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--amber), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  /* ── PHILOSOPHY SECTION ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 10vw;
+  }
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-tag::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--amber);
+  }
+  .philosophy-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .philosophy-left h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 3.5vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+  .philosophy-left h2 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+  .philosophy-right {
+    padding-top: 8px;
+  }
+  .philosophy-right p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: rgba(240, 234, 216, 0.72);
+    margin-bottom: 24px;
+  }
+  .philosophy-right p strong {
+    color: var(--vellum);
+    font-weight: 500;
+  }
+  /* Map vs Place visual */
+  .map-place-visual {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    background: rgba(42, 31, 20, 0.3);
+  }
+  .mvp-side {
+    padding: 48px 40px;
+  }
+  .mvp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .mvp-side h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .mvp-side.right h3 {
+    color: var(--amber);
+  }
+  .mvp-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mvp-items li {
+    font-size: 13px;
+    color: rgba(240, 234, 216, 0.6);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .mvp-items li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+  .mvp-side.right .mvp-items li {
+    color: rgba(240, 234, 216, 0.85);
+  }
+  .mvp-side.right .mvp-items li::before {
+    color: var(--amber);
+  }
+  .mvp-divider {
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--amber), transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .mvp-divider-label {
+    writing-mode: vertical-lr;
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    background: var(--ink);
+    padding: 8px 4px;
+  }
+  /* ── INTELLIGENCE STACK ── */
+  .stack-section {
+    padding: 100px 10vw;
+    position: relative;
+    z-index: 1;
+  }
+  .stack-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stack-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    max-width: 400px;
+  }
+  .stack-header .caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    max-width: 260px;
+    text-align: right;
+    line-height: 1.6;
+  }
+  /* The layered stack diagram */
+  .stack-diagram {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .stack-layer {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    transition: background 0.4s ease;
+    cursor: default;
+  }
+  .stack-layer:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+  .stack-layer:hover {
+    background: rgba(200, 132, 58, 0.05);
+  }
+  .stack-layer:hover .layer-number {
+    color: var(--amber);
+  }
+  .layer-meta {
+    padding: 32px 24px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .layer-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .layer-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .layer-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(200,132,58,0.3);
+    padding: 3px 8px;
+    display: inline-block;
+  }
+  .layer-body {
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .layer-description {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(240, 234, 216, 0.68);
+  }
+  .layer-description strong {
+    color: var(--vellum);
+    font-weight: 500;
+  }
+  .layer-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .signal-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(240, 234, 216, 0.55);
+    letter-spacing: 0.06em;
+  }
+  .signal-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex-shrink: 0;
+  }
+  /* ── AGENT GRID ── */
+  .agents-section {
+    padding: 100px 10vw;
+    position: relative;
+    z-index: 1;
+    background: rgba(42, 31, 20, 0.2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 56px;
+    border: 1px solid var(--border);
+  }
+  .agent-card {
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.4s ease;
+    overflow: hidden;
+  }
+  .agent-card:last-child {
+    border-right: none;
+  }
+  .agent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--amber), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .agent-card:hover::before { opacity: 1; }
+  .agent-card:hover { background: rgba(200, 132, 58, 0.04); }
+  .agent-glyph {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    color: var(--amber);
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  .agent-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .agent-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .agent-description {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(240, 234, 216, 0.62);
+  }
+  /* Operational agents row */
+  .operational-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: rgba(13, 11, 8, 0.6);
+  }
+  .op-card {
+    padding: 24px 32px;
+    border-right: 1px solid var(--border);
+  }
+  .op-card:last-child { border-right: none; }
+  .op-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 4px;
+    transition: color 0.3s;
+  }
+  .op-card:hover .op-name { color: var(--vellum); }
+  .op-function {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(122, 110, 97, 0.7);
+    letter-spacing: 0.08em;
+  }
+  .agent-row-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .agent-row-label::before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 1px;
+    background: var(--muted);
+  }
+  /* ── DIVISIONS ── */
+  .divisions-section {
+    padding: 100px 10vw;
+    position: relative;
+    z-index: 1;
+  }
+  .divisions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 56px;
+    border: 1px solid var(--border);
+  }
+  .division-card {
+    background: var(--ink);
+    padding: 48px 40px;
+    position: relative;
+    transition: background 0.4s;
+  }
+  .division-card:hover {
+    background: rgba(42, 31, 20, 0.5);
+  }
+  .division-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .division-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .division-name span {
+    color: var(--amber);
+  }
+  .division-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .division-body {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(240, 234, 216, 0.65);
+    margin-bottom: 28px;
+  }
+  .division-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(200,132,58,0.25);
+    padding: 4px 10px;
+  }
+  /* ── THESIS BLOCK ── */
+  .thesis-section {
+    padding: 120px 10vw;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    background: rgba(42, 31, 20, 0.15);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .thesis-inner {
+    max-width: 800px;
+  }
+  .thesis-quote {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 56px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+  }
+  .thesis-quote em {
+    color: var(--amber);
+    font-style: italic;
+  }
+  .thesis-body {
+    font-size: 16px;
+    line-height: 1.8;
+    color: rgba(240, 234, 216, 0.65);
+    max-width: 600px;
+    margin: 0 auto 40px;
+  }
+  .thesis-body strong {
+    color: var(--vellum);
+    font-weight: 500;
+  }
+  .thesis-attribution {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* ── GTI METHODOLOGY ── */
+  .methodology-section {
+    padding: 100px 10vw;
+    position: relative;
+    z-index: 1;
+  }
+  .methodology-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+    margin-top: 56px;
+    border: 1px solid var(--border);
+  }
+  .method-step {
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .method-step:last-child { border-right: none; }
+  .method-arrow {
+    position: absolute;
+    top: 50%;
+    right: -18px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 1px;
+    background: var(--amber);
+    z-index: 2;
+  }
+  .method-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 6px solid var(--amber);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  .method-step:last-child .method-arrow { display: none; }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .step-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .step-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(240, 234, 216, 0.6);
+  }
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 60px 10vw;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+  }
+  .footer-wordmark {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .footer-wordmark span { color: var(--amber); }
+  .footer-tagline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .footer-right {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .footer-right a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-right a:hover { color: var(--amber); }
+  .footer-copy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: rgba(122,110,97,0.5);
+    margin-top: 40px;
+  }
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* ── BACKGROUND ELEMENTS ── */
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-orb-1 {
+    width: 500px;
+    height: 500px;
+    background: rgba(200, 132, 58, 0.06);
+    top: -100px;
+    right: -100px;
+  }
+  .bg-orb-2 {
+    width: 400px;
+    height: 400px;
+    background: rgba(200, 132, 58, 0.04);
+    bottom: 200px;
+    left: -80px;
+  }
+  /* Pulse dot */
+  .pulse-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-right: 8px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .hero { padding: 120px 24px 80px; }
+    .section, .stack-section, .agents-section, .divisions-section, .methodology-section { padding: 80px 24px; }
+    .philosophy-split { grid-template-columns: 1fr; gap: 40px; }
+    .agents-grid { grid-template-columns: repeat(2, 1fr); }
+    .operational-row { grid-template-columns: repeat(2, 1fr); }
+    .divisions-grid { grid-template-columns: 1fr; }
+    .methodology-grid { grid-template-columns: 1fr 1fr; }
+    .method-arrow { display: none; }
+    .stack-layer { grid-template-columns: 1fr; }
+    .layer-body { grid-template-columns: 1fr; }
+    .stack-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .stack-header .caption { text-align: left; }
+    footer { grid-template-columns: 1fr; }
+    .footer-right { text-align: left; }
+    .map-place-visual { grid-template-columns: 1fr; }
+    .mvp-divider { display: none; }
+  }
+  @media (max-width: 600px) {
+    .agents-grid { grid-template-columns: 1fr; }
+    .operational-row { grid-template-columns: 1fr 1fr; }
+    .methodology-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-overlay"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<!-- NAV -->
+<nav>
+  <div class="nav-wordmark">House of <span>Loxley</span></div>
+  <div class="nav-right"><span class="pulse-dot"></span>Powered by Zizu AI</div>
+</nav>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-coordinates">39.9612° N, 82.9988° W → ACTIVE CORRIDOR SURVEILLANCE</div>
+  <div class="hero-eyebrow">House of Loxley Holdings · Zizu AI · Est. 2022</div>
+  <h1 class="hero-headline">
+    <span class="line line-1">The difference</span>
+    <span class="line line-2">between a map</span>
+    <span class="line line-3">and</span>
+    <span class="line line-4">a place.</span>
+  </h1>
+  <div class="hero-divider"></div>
+  <p class="hero-subtext">
+    Every map is someone's abstraction. <strong>We work in the place itself</strong> — on-the-ground intelligence, synthesized by AI, delivered as institutional advantage. Real estate has a thinking problem, not a data problem.
+  </p>
+  <div class="hero-corner">
+    <div class="label">Year 1 Target ARR</div>
+    <div class="value">$4.175M</div>
+    <div class="label" style="margin-top:12px">Primary Market</div>
+    <div class="value">Dayton–Columbus I-70</div>
+  </div>
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+<!-- PHILOSOPHY -->
+<section class="section reveal">
+  <div class="section-tag">The Philosophy</div>
+  <div class="philosophy-split">
+    <div class="philosophy-left">
+      <h2>Intelligence is<br>earned on the<br><em>ground,</em> not<br>extracted from<br>a spreadsheet.</h2>
+    </div>
+    <div class="philosophy-right">
+      <p>
+        A map tells you where something is. <strong>A place tells you what it means.</strong> The coordinates exist. The zoning exists. The census data exists. What doesn't exist in any database is the convergence signal — the aerospace contract that will pull 3,000 engineers into a corridor, the supply chain anchor that hasn't broken ground yet, the hotel that doesn't know it's in the path of a decade of demand.
+      </p>
+      <p>
+        House of Loxley was built on the conviction that <strong>the most valuable intelligence is always pre-institutional</strong> — it lives in operational patterns, procurement flows, lived environments, and the synthesis of signals that no single analyst can hold simultaneously.
+      </p>
+      <p>
+        Zizu AI doesn't replace that judgment. It <strong>scales it</strong>.
+      </p>
+    </div>
+  </div>
+  <div class="map-place-visual reveal">
+    <div class="mvp-side">
+      <div class="mvp-label">Traditional Approach</div>
+      <h3>The Map</h3>
+      <ul class="mvp-items">
+        <li>Census demographics and population projections</li>
+        <li>CoStar comps and cap rate averages</li>
+        <li>Trailing 12-month RevPAR data</li>
+        <li>Broker opinions of value</li>
+        <li>Static market reports from 90 days ago</li>
+        <li>Information everyone already has</li>
+      </ul>
+    </div>
+    <div class="mvp-divider">
+      <div class="mvp-divider-label">vs</div>
+    </div>
+    <div class="mvp-side right">
+      <div class="mvp-label">House of Loxley · Zizu AI</div>
+      <h3>The Place</h3>
+      <ul class="mvp-items">
+        <li>Aerospace operational surveillance &amp; procurement flow analysis</li>
+        <li>Lived-environment assessment before the capital arrives</li>
+        <li>Defense contract cascades mapped to hospitality demand vectors</li>
+        <li>Ground Truth Intelligence synthesized in real time</li>
+        <li>Corridor Scores™ updated on deployment signals, not lag data</li>
+        <li>Information no one else has assembled yet</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<!-- METHODOLOGY -->
+<section class="methodology-section reveal">
+  <div class="section-tag">Ground Truth Intelligence Framework</div>
+  <div class="stack-header">
+    <h2>Four inputs.<br>One synthesis.</h2>
+    <div class="caption">The GTI methodology — street up, not spreadsheet down. Mixed-method intelligence that converges on pre-institutional signal.</div>
+  </div>
+  <div class="methodology-grid">
+    <div class="method-step">
+      <div class="method-arrow"></div>
+      <div class="step-num">GTI-01</div>
+      <div class="step-name">Aerospace Operational Surveillance</div>
+      <div class="step-desc">Defense contract tracking, procurement flow analysis, AFRL and WPAFB operational signals. The military-industrial cascade that precedes civilian demand by 18–36 months.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-arrow"></div>
+      <div class="step-num">GTI-02</div>
+      <div class="step-name">Procurement Intelligence</div>
+      <div class="step-desc">Federal acquisition data, subcontractor network mapping, Anduril-class prime contractor deployments. Where the money flows before it shows up in CoStar.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-arrow"></div>
+      <div class="step-num">GTI-03</div>
+      <div class="step-name">Lived-Environment Assessment</div>
+      <div class="step-desc">On-the-ground qualitative intelligence. What's opening, closing, and changing that no algorithm sees. The texture of a corridor before it becomes a market.</div>
+    </div>
+    <div class="method-step">
+      <div class="step-num">GTI-04</div>
+      <div class="step-name">Zizu AI Computational Synthesis</div>
+      <div class="step-desc">All four inputs ingested, weighted, and synthesized by the Rosie agent framework into Loxley Corridor Scores™ and Industrial Demand Cascades™. Institutional-grade output.</div>
+    </div>
+  </div>
+</section>
+<!-- INTELLIGENCE STACK -->
+<section class="stack-section reveal">
+  <div class="section-tag">The Intelligence Stack</div>
+  <div class="stack-header">
+    <h2>Every layer informs<br>every other layer.</h2>
+    <div class="caption">Cohesive by design. Each capability is purpose-built. Together, they produce intelligence no single tool or analyst can replicate.</div>
+  </div>
+  <div class="stack-diagram">
+    <div class="stack-layer">
+      <div class="layer-meta">
+        <div class="layer-number">LAYER 01</div>
+        <div class="layer-name">Raw Signal Ingestion</div>
+        <div class="layer-tag">Cloudflare · D1 · R2</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-description">
+          The foundation. <strong>Aerospace contracts, procurement data, lived-environment observations, and operational signals</strong> ingested continuously into the Cloudflare edge infrastructure. Zero latency between the ground and the model.
+        </div>
+        <div class="layer-signals">
+          <div class="signal-item"><div class="signal-dot"></div>Federal acquisition feeds</div>
+          <div class="signal-item"><div class="signal-dot"></div>AFRL / WPAFB operational data</div>
+          <div class="signal-item"><div class="signal-dot"></div>Procurement network mapping</div>
+          <div class="signal-item"><div class="signal-dot"></div>Field intelligence uploads</div>
+          <div class="signal-item"><div class="signal-dot"></div>Mac Mini on-premise node sync</div>
+        </div>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="layer-meta">
+        <div class="layer-number">LAYER 02</div>
+        <div class="layer-name">Rosie Agent Framework</div>
+        <div class="layer-tag">Anthropic API · Claude</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-description">
+          Four cognitive agents working as a single intelligence system. <strong>Scout finds it. Philosopher contextualizes it. Atticus stress-tests it. Strategist deploys it.</strong> No monolithic model — purpose-built agents composing into institutional insight.
+        </div>
+        <div class="layer-signals">
+          <div class="signal-item"><div class="signal-dot"></div>Scout → pattern recognition</div>
+          <div class="signal-item"><div class="signal-dot"></div>Philosopher → abstract reasoning</div>
+          <div class="signal-item"><div class="signal-dot"></div>Atticus → adversarial validation</div>
+          <div class="signal-item"><div class="signal-dot"></div>Strategist → deployment synthesis</div>
+          <div class="signal-item"><div class="signal-dot"></div>Skill Factory → zero-touch delivery</div>
+        </div>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="layer-meta">
+        <div class="layer-number">LAYER 03</div>
+        <div class="layer-name">Loxley Corridor Score™</div>
+        <div class="layer-tag">Proprietary IP · Danielle Dubosq</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-description">
+          The synthesis output. <strong>A single, weighted intelligence score</strong> combining aerospace operational signals, procurement flow, lived-environment data, and industrial demand cascade projections. Updated on deployment signals, not trailing data.
+        </div>
+        <div class="layer-signals">
+          <div class="signal-item"><div class="signal-dot"></div>Industrial Demand Cascade™ weighting</div>
+          <div class="signal-item"><div class="signal-dot"></div>Defense-to-civilian lead time modeling</div>
+          <div class="signal-item"><div class="signal-dot"></div>Hospitality demand vector projection</div>
+          <div class="signal-item"><div class="signal-dot"></div>Corridor heat mapping via Loxley Atlas</div>
+          <div class="signal-item"><div class="signal-dot"></div>Weekly autonomous refresh cycle</div>
+        </div>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="layer-meta">
+        <div class="layer-number">LAYER 04</div>
+        <div class="layer-name">Client Intelligence Delivery</div>
+        <div class="layer-tag">Loxley Commercial · iOS Portal</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-description">
+          Intelligence reaches clients as <strong>actionable institutional deliverables</strong> — Corridor Snapshots, deal briefs, advisory engagements, and live dashboard access via the iOS client portal. The stack runs; clients decide.
+        </div>
+        <div class="layer-signals">
+          <div class="signal-item"><div class="signal-dot"></div>SwiftUI + WKWebView iOS portal</div>
+          <div class="signal-item"><div class="signal-dot"></div>Corridor Snapshot automated reports</div>
+          <div class="signal-item"><div class="signal-dot"></div>Engagement Letters → $5K–$300K</div>
+          <div class="signal-item"><div class="signal-dot"></div>Zizu AI subscriptions → $25K–$150K/yr</div>
+          <div class="signal-item"><div class="signal-dot"></div>PE firms · family offices · operators</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- AGENTS -->
+<section class="agents-section reveal">
+  <div class="section-tag">The Rosie Framework — Cognitive Agents</div>
+  <div class="agent-row-label" style="margin-top: 40px; margin-bottom: 12px;">Core Intelligence Agents</div>
+  <div class="agents-grid">
+    <div class="agent-card">
+      <div class="agent-glyph">◈</div>
+      <div class="agent-name">Scout</div>
+      <div class="agent-role">Pattern Recognition</div>
+      <div class="agent-description">Identifies convergence signals before they become consensus. Aerospace contracts, procurement anomalies, corridor inflection points. Sees what others miss because it's looking where others aren't.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-glyph">◉</div>
+      <div class="agent-name">Philosopher</div>
+      <div class="agent-role">Abstract Reasoning</div>
+      <div class="agent-description">Contextualizes signal within historical pattern. What did Huntsville look like in 2005? What did Dayton look like before Wright-Patt expansion? Abstract reasoning applied to concrete real estate thesis.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-glyph">◎</div>
+      <div class="agent-name">Atticus</div>
+      <div class="agent-role">Adversarial Validation</div>
+      <div class="agent-description">Every thesis faces a prosecutor. Atticus stress-tests assumptions, finds the counter-argument, validates the Corridor Score™ against failure modes. Intelligence that survives Atticus is institutional-grade.</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-glyph">◇</div>
+      <div class="agent-name">Strategist</div>
+      <div class="agent-role">Intuitive Synthesis</div>
+      <div class="agent-description">Converts validated intelligence into deployment-ready strategy. Deal briefs, engagement recommendations, corridor positioning. The output a PE firm or family office can act on immediately.</div>
+    </div>
+  </div>
+  <div class="agent-row-label" style="margin-top: 32px; margin-bottom: 12px;">Operational Execution Agents</div>
+  <div class="operational-row">
+    <div class="op-card">
+      <div class="op-name">Weyu</div>
+      <div class="op-function">Client-facing voice · Loxley Signal</div>
+    </div>
+    <div class="op-card">
+      <div class="op-name">BuyerID</div>
+      <div class="op-function">Investor profiling · deal matching</div>
+    </div>
+    <div class="op-card">
+      <div class="op-name">Junior Broker</div>
+      <div class="op-function">Deal sourcing · hotel discovery pipeline</div>
+    </div>
+    <div class="op-card">
+      <div class="op-name">Atlas</div>
+      <div class="op-function">Geospatial mapping · corridor visualization</div>
+    </div>
+  </div>
+</section>
+<!-- DIVISIONS -->
+<section class="divisions-section reveal">
+  <div class="section-tag">Four Divisions · One Intelligence Architecture</div>
+  <div class="divisions-grid">
+    <div class="division-card">
+      <div class="division-num">01 / INTELLIGENCE</div>
+      <div class="division-name">Zizu <span>AI</span></div>
+      <div class="division-subtitle">Corridor Intelligence Platform</div>
+      <div class="division-body">The cognitive engine behind everything. Autonomous corridor surveillance, Rosie agent deployment, Loxley Corridor Score™ generation, and Skill Factory delivery. Subscriptions $25K–$150K/year for institutional access.</div>
+      <div class="division-tags">
+        <span class="tag">Anthropic API</span>
+        <span class="tag">Cloudflare Edge</span>
+        <span class="tag">Rosie Framework</span>
+        <span class="tag">Autonomous Delivery</span>
+      </div>
+    </div>
+    <div class="division-card">
+      <div class="division-num">02 / ADVISORY</div>
+      <div class="division-name">Loxley <span>Commercial</span></div>
+      <div class="division-subtitle">Strategic Advisory · Timothy Watkins, SMD</div>
+      <div class="division-body">High-touch institutional advisory powered by Zizu AI intelligence. Corridor briefings, acquisition strategy, operator introductions, and capital deployment guidance. Engagements $5K–$300K. Launch: May 11, 2026.</div>
+      <div class="division-tags">
+        <span class="tag">PE Firms</span>
+        <span class="tag">Family Offices</span>
+        <span class="tag">Corridor Snapshots</span>
+        <span class="tag">Deal Strategy</span>
+      </div>
+    </div>
+    <div class="division-card">
+      <div class="division-num">03 / GEOSPATIAL</div>
+      <div class="division-name">Loxley <span>Atlas</span></div>
+      <div class="division-subtitle">Geospatial Investment Mapping</div>
+      <div class="division-body">Defense cluster visualization, industrial demand cascade mapping, corridor heat scores rendered geospatially. The Loxley Corridor Score™ as a living map — not a static report. Atlas sees the thesis on the ground.</div>
+      <div class="division-tags">
+        <span class="tag">Corridor Heat Maps</span>
+        <span class="tag">Defense Clusters</span>
+        <span class="tag">Demand Cascade™</span>
+        <span class="tag">Live Refresh</span>
+      </div>
+    </div>
+    <div class="division-card">
+      <div class="division-num">04 / AUTOMATION</div>
+      <div class="division-name">Loxley <span>Signal</span></div>
+      <div class="division-subtitle">Voice Automation · Weyu Agent</div>
+      <div class="division-body">Intelligent voice automation for client intake, corridor inquiry, and deal flow qualification. Weyu handles the first conversation so the advisory team handles the right one. The voice of the intelligence layer.</div>
+      <div class="division-tags">
+        <span class="tag">Voice AI</span>
+        <span class="tag">Client Intake</span>
+        <span class="tag">Deal Qualification</span>
+        <span class="tag">24/7 Coverage</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- THESIS BLOCK -->
+<section class="thesis-section reveal">
+  <div class="thesis-inner">
+    <div class="thesis-quote">
+      "Real estate has a<br><em>thinking problem,</em><br>not a data problem."
+    </div>
+    <p class="thesis-body">
+      The world is saturated with market reports, cap rate tables, and demographic overlays. What's absent is <strong>synthesis</strong> — the cognitive architecture to hold aerospace procurement signals, lived-environment intelligence, and institutional demand patterns simultaneously, and translate them into pre-institutional advantage.
+    </p>
+    <p class="thesis-body">
+      That is what House of Loxley was built to provide.<br>That is what Zizu AI makes scalable.
+    </p>
+    <div class="thesis-attribution">— House of Loxley · Principal Architect · 2022</div>
+  </div>
+</section>
+<!-- FOOTER -->
+<footer class="reveal">
+  <div>
+    <div class="footer-wordmark">House of <span>Loxley</span> Holdings</div>
+    <div class="footer-tagline">The difference between a map and a place.</div>
+    <div class="footer-copy" style="margin-top: 24px;">
+      Zizu AI · Loxley Commercial · Loxley Atlas · Loxley Signal<br>
+      houseofloxley.com · loxleyai.com · © 2026 House of Loxley Holdings
+    </div>
+  </div>
+  <div class="footer-right">
+    <a href="#">houseofloxley.com</a>
+    <a href="#">loxleyai.com</a>
+    <a href="#">Loxley Commercial Launch — May 11, 2026</a>
+    <div style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(122,110,97,0.4); letter-spacing: 0.12em;">DAYTON–COLUMBUS I-70 CORRIDOR<br>PRIMARY MARKET · ACTIVE DEPLOYMENT</div>
+  </div>
+</footer>
+<script>
+  // Intersection observer for reveal animations
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+  // Parallax on hero
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.style.transform = `translateY(${scrollY * 0.3}px)`;
+    }
+  });
+  // Live coordinates ticker
+  const coordEl = document.querySelector('.hero-coordinates');
+  const corridors = [
+    '39.9612° N, 82.9988° W → DAYTON–COLUMBUS I-70 ACTIVE',
+    '39.7589° N, 84.1916° W → WRIGHT-PATTERSON AFB SIGNAL',
+    '40.0000° N, 83.0000° W → ANDURIL ARSENAL-1 COLUMBUS',
+    '34.7304° N, 86.5861° W → HUNTSVILLE — HISTORICAL PROOF',
+    '39.9612° N, 82.9988° W → ACTIVE CORRIDOR SURVEILLANCE',
+  ];
+  let corridorIdx = 0;
+  setInterval(() => {
+    corridorIdx = (corridorIdx + 1) % corridors.length;
+    if (coordEl) {
+      coordEl.style.opacity = 0;
+      setTimeout(() => {
+        coordEl.textContent = corridors[corridorIdx];
+        coordEl.style.opacity = 1;
+      }, 300);
+    }
+  }, 3000);
+  coordEl && (coordEl.style.transition = 'opacity 0.3s ease');
+</script>
+</body>
+</html>
