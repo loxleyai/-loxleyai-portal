@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House of Loxley — Corridor Intelligence Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --lox-black: #0a0a0a;
+  --lox-charcoal: #1a1a2e;
+  --lox-navy: #16213e;
+  --lox-steel: #2c3e6b;
+  --lox-gold: #c9a84c;
+  --lox-gold-light: #e4cc7a;
+  --lox-gold-dim: rgba(201,168,76,0.15);
+  --lox-teal: #0d9488;
+  --lox-green: #2ecc71;
+  --lox-red: #e74c5f;
+  --lox-orange: #f0932b;
+  --lox-surface: #111122;
+  --lox-surface-2: #1a1a33;
+  --lox-border: rgba(201,168,76,0.12);
+  --lox-text: #e8e6e3;
+  --lox-text-muted: #8a8a9a;
+}
+
+html { font-size: 16px; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--lox-charcoal);
+  color: var(--lox-text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono { font-family: 'Space Mono', monospace; }
+
+/* ── ACCESS GATE ── */
+#gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.gate-card {
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.gate-logo {
+  width: 64px;
+  height: 64px;
+  background: var(--lox-gold);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--lox-black);
+}
+
+.gate-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lox-gold);
+  margin-bottom: 0.25rem;
+}
+
+.gate-subtitle {
+  font-size: 0.95rem;
+  color: var(--lox-text-muted);
+  margin-bottom: 2rem;
+}
+
+.gate-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--lox-surface-2);
+  border: 1px solid var(--lox-border);
+  border-radius: 8px;
+  color: var(--lox-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.gate-input:focus { border-color: var(--lox-gold); }
+.gate-input::placeholder { color: var(--lox-text-muted); }
+
+.gate-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--lox-gold);
+  color: var(--lox-black);
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gate-btn:hover { background: var(--lox-gold-light); }
+
+.gate-error {
+  color: var(--lox-red);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  min-height: 1.25rem;
+}
+
+/* ── HEADER ── */
+#app { display: none; }
+
+.header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-bottom: 1px solid var(--lox-gold);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+  background: var(--lox-gold);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--lox-black);
+  flex-shrink: 0;
+}
+
+.header-brand {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--lox-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header-sub {
+  font-size: 0.75rem;
+  color: var(--lox-text-muted);
+  font-weight: 400;
+}
+
+.header-right {
+  color: var(--lox-text-muted);
+  font-size: 0.85rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.header-right .count {
+  color: var(--lox-gold);
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+}
+
+/* ── MAIN CONTENT ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+/* ── CORRIDOR CARDS GRID ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.corridor-card {
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.corridor-card:hover {
+  border-color: var(--lox-gold);
+  transform: translateY(-2px);
+}
+
+.corridor-card.active { border-color: var(--lox-gold); }
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.card-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--lox-gold);
+  line-height: 1;
+}
+
+.card-score-label {
+  font-size: 0.7rem;
+  color: var(--lox-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.badge-green { background: rgba(46,204,113,0.15); color: var(--lox-green); }
+.badge-teal { background: rgba(13,148,136,0.15); color: var(--lox-teal); }
+
+.card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.card-meta {
+  font-size: 0.8rem;
+  color: var(--lox-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.card-topline {
+  font-size: 0.85rem;
+  color: var(--lox-text-muted);
+  line-height: 1.45;
+}
+
+/* ── DETAIL VIEW ── */
+#detail { display: none; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid var(--lox-border);
+  color: var(--lox-text-muted);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.back-btn:hover { border-color: var(--lox-gold); color: var(--lox-gold); }
+
+.detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.detail-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.detail-meta {
+  font-size: 0.9rem;
+  color: var(--lox-text-muted);
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--lox-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--lox-border);
+}
+
+.section { margin-bottom: 2.5rem; }
+
+/* Score Bars */
+.score-bars { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.score-bar-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr 50px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.score-bar-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+.score-bar-value {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  color: var(--lox-gold);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.score-bar-track {
+  height: 10px;
+  background: var(--lox-surface-2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--lox-gold), var(--lox-gold-light));
+  border-radius: 5px;
+  transition: width 0.6s ease;
+}
+
+.score-bar-weight {
+  font-size: 0.75rem;
+  color: var(--lox-text-muted);
+}
+
+/* Summary / Thesis Cards */
+.text-card {
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--lox-text);
+}
+
+.thesis-card {
+  background: var(--lox-surface-2);
+  border: 1px solid var(--lox-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--lox-text);
+  border-left: 3px solid var(--lox-gold);
+}
+
+/* Demand Wave */
+.wave-container {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.wave-step {
+  flex: 1;
+  text-align: center;
+  padding: 1rem 0.5rem;
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  position: relative;
+  transition: background 0.2s;
+}
+
+.wave-step:first-child { border-radius: 8px 0 0 8px; }
+.wave-step:last-child { border-radius: 0 8px 8px 0; }
+
+.wave-step.active {
+  background: var(--lox-gold-dim);
+  border-color: var(--lox-gold);
+  z-index: 1;
+}
+
+.wave-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lox-text-muted);
+}
+
+.wave-step.active .wave-number { color: var(--lox-gold); }
+
+.wave-label {
+  font-size: 0.7rem;
+  color: var(--lox-text-muted);
+  margin-top: 0.35rem;
+  line-height: 1.3;
+}
+
+.wave-step.active .wave-label { color: var(--lox-text); }
+
+.wave-peak {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--lox-text-muted);
+}
+
+.wave-peak span {
+  font-family: 'Space Mono', monospace;
+  color: var(--lox-gold);
+  font-weight: 700;
+}
+
+/* Projects Table */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--lox-border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th {
+  background: var(--lox-navy);
+  color: var(--lox-text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--lox-border);
+  background: var(--lox-surface);
+  white-space: nowrap;
+}
+
+.data-table tr:hover td { background: var(--lox-surface-2); }
+
+.status-active { color: var(--lox-green); }
+.status-construction { color: var(--lox-orange); }
+.status-emerging { color: var(--lox-teal); }
+
+/* Supply Metrics */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 10px;
+  padding: 1.15rem;
+  text-align: center;
+}
+
+.metric-value {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lox-gold);
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  color: var(--lox-text-muted);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.supply-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--lox-text-muted);
+  font-style: italic;
+}
+
+/* Recommendations */
+.rec-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.rec-card {
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.rec-num {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--lox-text-muted);
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+
+.rec-content { flex: 1; }
+
+.rec-action {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.rec-acquire { background: var(--lox-gold-dim); color: var(--lox-gold); }
+.rec-hold { background: rgba(13,148,136,0.15); color: var(--lox-teal); }
+.rec-monitor { background: rgba(138,138,154,0.15); color: var(--lox-text-muted); }
+.rec-evaluate { background: rgba(240,147,43,0.15); color: var(--lox-orange); }
+
+.rec-target {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.rec-rationale {
+  font-size: 0.85rem;
+  color: var(--lox-text-muted);
+  line-height: 1.5;
+}
+
+/* Risks */
+.risk-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.risk-list li {
+  font-size: 0.9rem;
+  color: var(--lox-text);
+  padding: 0.65rem 1rem;
+  background: var(--lox-surface);
+  border: 1px solid var(--lox-border);
+  border-radius: 6px;
+  border-left: 3px solid var(--lox-red);
+  line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.75rem;
+  color: var(--lox-text-muted);
+  border-top: 1px solid var(--lox-border);
+  margin-top: 2rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+  }
+  .header-right { align-self: flex-end; }
+  .main { padding: 1.25rem 1rem; }
+  .card-grid { grid-template-columns: 1fr; }
+  .score-bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+  .score-bar-label { text-align: left; }
+  .score-bar-row .score-bar-value { text-align: left; }
+  .score-bar-row .score-bar-weight { text-align: left; }
+  .wave-container { flex-direction: column; }
+  .wave-step { border-radius: 0; }
+  .wave-step:first-child { border-radius: 8px 8px 0 0; }
+  .wave-step:last-child { border-radius: 0 0 8px 8px; }
+  .detail-title { font-size: 1.35rem; }
+  .gate-card { padding: 2rem 1.5rem; }
+  .rec-card { flex-direction: column; gap: 0.5rem; }
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .metric-grid { grid-template-columns: 1fr; }
+  .card-score { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ STATE 1: ACCESS GATE ═══════════ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">HL</div>
+    <div class="gate-title">House of Loxley</div>
+    <div class="gate-subtitle">Corridor Intelligence Portal</div>
+    <form id="gate-form" autocomplete="off">
+      <input type="password" id="gate-code" class="gate-input" placeholder="Access code" autofocus>
+      <button type="submit" class="gate-btn">Enter Portal</button>
+    </form>
+    <div id="gate-error" class="gate-error"></div>
+  </div>
+</div>
+
+<!-- ═══════════ STATE 2: DASHBOARD ═══════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo">HL</div>
+      <div>
+        <div class="header-brand">House of Loxley</div>
+        <div class="header-sub">Corridor Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="count mono">3</span> Active Corridors
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Corridor Summary Cards -->
+    <div id="cards" class="card-grid"></div>
+
+    <!-- Detail View -->
+    <div id="detail"></div>
+  </main>
+
+  <footer class="footer">
+    House of Loxley Holdings &middot; Corridor Intelligence &middot; Confidential
+  </footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════════ */
+const CORRIDORS = [
+  {
+    id: "dayton",
+    name: "Dayton Defense Corridor",
+    score: 85,
+    signal: "IMMEDIATE ACTION",
+    signalClass: "badge-green",
+    state: "OH",
+    msa: "Dayton-Springfield MSA",
+    topline: "$13.2B SAOC + Wright-Patterson AFB anchor",
+    factors: [
+      { label: "Industrial Pipeline", score: 92, weight: "30%" },
+      { label: "Supply Gap",          score: 88, weight: "25%" },
+      { label: "Demand Timing",       score: 80, weight: "20%" },
+      { label: "Market Accessibility", score: 78, weight: "15%" },
+      { label: "Execution Risk",      score: 72, weight: "10%" }
+    ],
+    summary: "The Dayton Defense Corridor is anchored by Wright-Patterson Air Force Base \u2014 the largest single-site employer in Ohio \u2014 and the $13.2B SAOC contract generating a decade of rotating contractor presence through 2034. Anduril\u2019s Arsenal-1 campus and the Honda/LG EV battery plant add non-correlated demand drivers. Supply constraints in the Fairborn/Beavercreek submarket (AICUZ zoning restrictions) limit new development at the highest-demand locations. Select-service extended-stay assets in the Wright-Patterson influence radius are the primary beneficiary class.",
+    thesis: "The demand story is not speculative. The SAOC program creates continuous rotating contractor presence with no natural end date before 2034 and extension options beyond. For a hotel operator with extended-stay assets in this corridor, this is the equivalent of a 10-year anchor tenant. Assets trading at 55\u201365% of replacement cost today will not be available at those prices once the demand wave is visible in STR and CoStar data \u2014 an 18-to-24-month window before the market reprices.",
+    wave: { current: 2, total: 5, label: "Construction & Early Operations", peak: "2027\u20132029" },
+    waveLabels: ["Site Prep", "Construction &\nEarly Ops", "Commissioning", "Ramp-Up", "Steady State"],
+    projects: [
+      { name: "SAOC", sponsor: "Leidos-led", capex: "$13.2B", type: "Defense", timeline: "2024\u20132034", status: "Active", statusClass: "status-active" },
+      { name: "Honda/LG EV Battery", sponsor: "Honda/LG Energy", capex: "$3.5B", type: "EV Battery", timeline: "2023\u20132025", status: "Under Construction", statusClass: "status-construction" },
+      { name: "Wright-Patterson Ops", sponsor: "U.S. Air Force", capex: "Ongoing", type: "Defense", timeline: "Permanent", status: "Active", statusClass: "status-active" }
+    ],
+    supply: {
+      rooms: "8,200",
+      properties: "62",
+      occupancy: "61%",
+      occupancySub: "68% WPAFB submarket",
+      pipeline: "425",
+      gap: "350 (18.4%)",
+      constraint: "AICUZ restrictions in Fairborn/Beavercreek"
+    },
+    recommendations: [
+      { action: "ACQUIRE", actionClass: "rec-acquire", target: "Extended-stay in Fairborn/Beavercreek", rationale: "Supply-constrained, 18-month window." },
+      { action: "HOLD", actionClass: "rec-hold", target: "West Chester/Liberty Township assets", rationale: "Stable WPAFB contractor demand." },
+      { action: "MONITOR", actionClass: "rec-monitor", target: "I-70 East sub-corridor", rationale: "WPAFB\u2013Arsenal-1 connector traffic." }
+    ],
+    risks: [
+      "SAOC subject to CR delays",
+      "BRAC historically grew WPAFB but future uncertain",
+      "Opioid recovery ongoing",
+      "Congressional support strong but not permanent"
+    ]
+  },
+  {
+    id: "phoenix",
+    name: "Phoenix Semiconductor Corridor",
+    score: 87,
+    signal: "IMMEDIATE ACTION",
+    signalClass: "badge-green",
+    state: "AZ",
+    msa: "Phoenix-Mesa-Chandler MSA",
+    topline: "$40B+ TSMC fab complex \u2014 largest U.S. semiconductor buildout",
+    factors: [
+      { label: "Industrial Pipeline", score: 95, weight: "30%" },
+      { label: "Supply Gap",          score: 82, weight: "25%" },
+      { label: "Demand Timing",       score: 90, weight: "20%" },
+      { label: "Market Accessibility", score: 85, weight: "15%" },
+      { label: "Execution Risk",      score: 76, weight: "10%" }
+    ],
+    summary: "The Phoenix Semiconductor Corridor centers on TSMC\u2019s Arizona fabrication complex \u2014 $40B+ in committed capital creating the most concentrated semiconductor manufacturing buildout in U.S. history. The five-wave demand model shows overlapping construction, commissioning, and operations phases through 2030, with peak demand projected in the 2027\u20132029 window. Multiple select-service flags are actively seeking placement in the corridor.",
+    thesis: "TSMC\u2019s commitment is irreversible \u2014 $40B+ in capital deployed with CHIPS Act funding attached. The demand wave structure creates a compounding effect: Wave 2 (construction) and Wave 3 (commissioning) overlap, generating peak accommodation demand before permanent workforce housing absorbs the operational population. The acquisition window is the 18-month period before overlapping waves peak and before STR data reflects the demand surge.",
+    wave: { current: 2, total: 5, label: "Construction & Early Operations", peak: "2027\u20132029 (Wave 2\u20133 overlap)" },
+    waveLabels: ["Site Prep", "Construction &\nEarly Ops", "Commissioning", "Ramp-Up", "Steady State"],
+    projects: [
+      { name: "TSMC Arizona Fab Complex", sponsor: "TSMC", capex: "$40B+", type: "Semiconductor", timeline: "2023\u20132030", status: "Active", statusClass: "status-active" },
+      { name: "CHIPS Act Supply Chain Cluster", sponsor: "Various", capex: "$8B+ est.", type: "Supply Chain", timeline: "2024\u20132030", status: "Emerging", statusClass: "status-emerging" }
+    ],
+    supply: {
+      rooms: "\u2014",
+      properties: "\u2014",
+      occupancy: "\u2014",
+      occupancySub: null,
+      pipeline: "\u2014",
+      gap: "\u2014",
+      constraint: "North Phoenix/Deer Valley submarket has limited purpose-built extended-stay. Active flag interest."
+    },
+    recommendations: [
+      { action: "ACQUIRE", actionClass: "rec-acquire", target: "Extended-stay in TSMC-proximate submarkets", rationale: "Before Wave 2\u20133 overlap." },
+      { action: "MONITOR", actionClass: "rec-monitor", target: "Supply chain ecosystem", rationale: "Creating secondary demand nodes." },
+      { action: "EVALUATE", actionClass: "rec-evaluate", target: "Water infrastructure", rationale: "Long-term risk factor." }
+    ],
+    risks: [
+      "Water constraints long-term",
+      "CHIPS disbursement timeline shifts",
+      "Phoenix has faster supply response than constrained markets",
+      "Taiwan Strait tensions (paradoxically increase AZ commitment)"
+    ]
+  },
+  {
+    id: "columbus",
+    name: "I-270 East Columbus Corridor",
+    score: 79,
+    signal: "STRONG OPPORTUNITY",
+    signalClass: "badge-teal",
+    state: "OH",
+    msa: "Columbus MSA",
+    topline: "$20B Intel Ohio + $500M Anduril Arsenal-1",
+    factors: [
+      { label: "Industrial Pipeline", score: 88, weight: "30%" },
+      { label: "Supply Gap",          score: 75, weight: "25%" },
+      { label: "Demand Timing",       score: 82, weight: "20%" },
+      { label: "Market Accessibility", score: 80, weight: "15%" },
+      { label: "Execution Risk",      score: 68, weight: "10%" }
+    ],
+    summary: "The I-270 East Columbus Corridor is anchored by Intel\u2019s $20B Phase 1 semiconductor fabrication complex in New Albany and Anduril\u2019s Arsenal-1 advanced manufacturing campus. Combined capital deployment exceeds $20B in the Columbus MSA. The corridor is in early-stage demand formation \u2014 Wave 1 transitioning to Wave 2 \u2014 with construction workforce demand running 18\u201336 months ahead of STR detection.",
+    thesis: "Intel\u2019s commitment is the largest single private-sector manufacturing investment in U.S. history. Ohio was chosen over Texas, Arizona, and New York. Construction workforce at peak: 7,000+ on site, with 3,000+ permanent jobs and 10,000+ indirect. Anduril adds 4,000 jobs on a $500M campus. The demand wave is earlier than Dayton or Phoenix \u2014 longer acquisition window but patience required on returns.",
+    wave: { current: 1, total: 5, label: "Wave 1\u20132 Transition", peak: "2028\u20132030" },
+    waveLabels: ["Site Prep &\nEarly Build", "Construction", "Commissioning", "Ramp-Up", "Steady State"],
+    projects: [
+      { name: "Intel Ohio Fab", sponsor: "Intel Corp", capex: "$20B", type: "Semiconductor", timeline: "2023\u20132028", status: "Active", statusClass: "status-active" },
+      { name: "Anduril Arsenal-1", sponsor: "Anduril Industries", capex: "$500M", type: "Defense Mfg", timeline: "2025\u20132030", status: "Active", statusClass: "status-active" },
+      { name: "Honda/LG Battery", sponsor: "Honda/LG", capex: "$3.5B", type: "EV Battery", timeline: "2023\u20132025", status: "Active", statusClass: "status-active" }
+    ],
+    supply: {
+      rooms: "\u2014",
+      properties: "\u2014",
+      occupancy: "\u2014",
+      occupancySub: "Columbus MSA 14th largest in U.S.",
+      pipeline: "\u2014",
+      gap: "\u2014",
+      constraint: "I-270 East submarket has limited existing lodging. Columbus has more development flexibility than Dayton. CMH is busiest Ohio airport."
+    },
+    recommendations: [
+      { action: "ACQUIRE", actionClass: "rec-acquire", target: "Extended-stay in I-270 East", rationale: "Construction-phase demand underway." },
+      { action: "HOLD", actionClass: "rec-hold", target: "Downtown Columbus assets", rationale: "Corporate + government demand." },
+      { action: "MONITOR", actionClass: "rec-monitor", target: "Licking County", rationale: "Intel production ramp approaches 2027\u20132028." }
+    ],
+    risks: [
+      "Intel timeline partly CHIPS Act dependent",
+      "Columbus supply response faster",
+      "I-270 East is greenfield \u2014 infrastructure pacing",
+      "Longer return timeline than Dayton/Phoenix"
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════════
+   GATE LOGIC
+   ═══════════════════════════════════════════════ */
+const VALID_CODES = ["loxley2026", "margaret2026"];
+
+function checkAccess() {
+  return sessionStorage.getItem("loxley_access") === "granted";
+}
+
+function grantAccess() {
+  sessionStorage.setItem("loxley_access", "granted");
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  renderCards();
+}
+
+if (checkAccess()) {
+  grantAccess();
+}
+
+document.getElementById("gate-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+  var code = document.getElementById("gate-code").value.trim().toLowerCase();
+  if (VALID_CODES.includes(code)) {
+    grantAccess();
+  } else {
+    document.getElementById("gate-error").textContent = "Invalid access code";
+    document.getElementById("gate-code").value = "";
+    document.getElementById("gate-code").focus();
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   RENDER CORRIDOR CARDS
+   ═══════════════════════════════════════════════ */
+function renderCards() {
+  var grid = document.getElementById("cards");
+  grid.innerHTML = CORRIDORS.map(function(c) {
+    return '<div class="corridor-card" data-id="' + c.id + '">' +
+      '<div class="card-header">' +
+        '<div>' +
+          '<div class="card-score-label">Watkins Score</div>' +
+          '<div class="card-score mono">' + c.score + '</div>' +
+        '</div>' +
+        '<span class="badge ' + c.signalClass + '">' + c.signal + '</span>' +
+      '</div>' +
+      '<div class="card-name">' + c.name + '</div>' +
+      '<div class="card-meta">' + c.state + ' &nbsp;|&nbsp; ' + c.msa + '</div>' +
+      '<div class="card-topline">' + c.topline + '</div>' +
+    '</div>';
+  }).join("");
+
+  grid.querySelectorAll(".corridor-card").forEach(function(card) {
+    card.addEventListener("click", function() {
+      showDetail(card.dataset.id);
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER DETAIL VIEW
+   ═══════════════════════════════════════════════ */
+function showDetail(id) {
+  var c = CORRIDORS.find(function(x) { return x.id === id; });
+  if (!c) return;
+
+  // Highlight active card
+  document.querySelectorAll(".corridor-card").forEach(function(el) {
+    el.classList.toggle("active", el.dataset.id === id);
+  });
+
+  var detail = document.getElementById("detail");
+  detail.style.display = "block";
+
+  var html = '';
+
+  // Back button
+  html += '<button class="back-btn" id="back-btn">&larr; All Corridors</button>';
+
+  // Title row
+  html += '<div class="detail-title-row">' +
+    '<div class="detail-title">' + c.name + '</div>' +
+    '<span class="badge ' + c.signalClass + '">' + c.signal + '</span>' +
+  '</div>';
+  html += '<div class="detail-meta">' + c.state + ' &nbsp;|&nbsp; ' + c.msa + ' &nbsp;|&nbsp; Watkins Score: <span class="mono" style="color:var(--lox-gold);font-weight:700">' + c.score + '</span></div>';
+
+  // ── Score Breakdown
+  html += '<div class="section">';
+  html += '<div class="section-title">Score Breakdown</div>';
+  html += '<div class="score-bars">';
+  c.factors.forEach(function(f) {
+    html += '<div class="score-bar-row">' +
+      '<div class="score-bar-label">' + f.label + '</div>' +
+      '<div class="score-bar-value">' + f.score + '</div>' +
+      '<div class="score-bar-track"><div class="score-bar-fill" style="width:' + f.score + '%"></div></div>' +
+      '<div class="score-bar-weight">' + f.weight + '</div>' +
+    '</div>';
+  });
+  html += '</div></div>';
+
+  // ── Executive Summary
+  html += '<div class="section">';
+  html += '<div class="section-title">Executive Summary</div>';
+  html += '<div class="text-card">' + c.summary + '</div>';
+  html += '</div>';
+
+  // ── Investment Thesis
+  html += '<div class="section">';
+  html += '<div class="section-title">Investment Thesis</div>';
+  html += '<div class="thesis-card">' + c.thesis + '</div>';
+  html += '</div>';
+
+  // ── Demand Wave
+  html += '<div class="section">';
+  html += '<div class="section-title">Demand Wave</div>';
+  html += '<div class="wave-container">';
+  for (var i = 1; i <= c.wave.total; i++) {
+    var isActive = i === c.wave.current;
+    html += '<div class="wave-step' + (isActive ? ' active' : '') + '">' +
+      '<div class="wave-number">' + i + '</div>' +
+      '<div class="wave-label">' + (c.waveLabels[i - 1] || 'Wave ' + i) + '</div>' +
+    '</div>';
+  }
+  html += '</div>';
+  html += '<div class="wave-peak">Current: <span>Wave ' + c.wave.current + '</span> &mdash; ' + c.wave.label + ' &nbsp;|&nbsp; Peak: <span>' + c.wave.peak + '</span></div>';
+  html += '</div>';
+
+  // ── Projects
+  html += '<div class="section">';
+  html += '<div class="section-title">Projects</div>';
+  html += '<div class="table-wrap"><table class="data-table">';
+  html += '<thead><tr><th>Name</th><th>Sponsor</th><th>CapEx</th><th>Type</th><th>Timeline</th><th>Status</th></tr></thead><tbody>';
+  c.projects.forEach(function(p) {
+    html += '<tr>' +
+      '<td style="font-weight:600">' + p.name + '</td>' +
+      '<td>' + p.sponsor + '</td>' +
+      '<td class="mono" style="color:var(--lox-gold)">' + p.capex + '</td>' +
+      '<td>' + p.type + '</td>' +
+      '<td class="mono">' + p.timeline + '</td>' +
+      '<td class="' + p.statusClass + '">' + p.status + '</td>' +
+    '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  // ── Supply Analysis
+  html += '<div class="section">';
+  html += '<div class="section-title">Supply Analysis</div>';
+  html += '<div class="metric-grid">';
+  html += '<div class="metric-card"><div class="metric-value mono">' + c.supply.rooms + '</div><div class="metric-label">Rooms</div></div>';
+  html += '<div class="metric-card"><div class="metric-value mono">' + c.supply.occupancy + '</div><div class="metric-label">Occupancy</div></div>';
+  html += '<div class="metric-card"><div class="metric-value mono">' + c.supply.pipeline + '</div><div class="metric-label">Pipeline Rooms</div></div>';
+  html += '<div class="metric-card"><div class="metric-value mono">' + c.supply.gap + '</div><div class="metric-label">Supply Gap</div></div>';
+  html += '</div>';
+  if (c.supply.occupancySub) {
+    html += '<div class="supply-note">' + c.supply.occupancySub + '</div>';
+  }
+  html += '<div class="supply-note">' + c.supply.constraint + '</div>';
+  html += '</div>';
+
+  // ── Recommendations
+  html += '<div class="section">';
+  html += '<div class="section-title">Recommendations</div>';
+  html += '<div class="rec-list">';
+  c.recommendations.forEach(function(r, idx) {
+    html += '<div class="rec-card">' +
+      '<div class="rec-num">' + (idx + 1) + '</div>' +
+      '<div class="rec-content">' +
+        '<div class="rec-action ' + r.actionClass + '">' + r.action + '</div>' +
+        '<div class="rec-target">' + r.target + '</div>' +
+        '<div class="rec-rationale">' + r.rationale + '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div></div>';
+
+  // ── Risk Factors
+  html += '<div class="section">';
+  html += '<div class="section-title">Risk Factors</div>';
+  html += '<ul class="risk-list">';
+  c.risks.forEach(function(r) {
+    html += '<li>' + r + '</li>';
+  });
+  html += '</ul></div>';
+
+  detail.innerHTML = html;
+
+  // Scroll to detail
+  detail.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Back button
+  document.getElementById("back-btn").addEventListener("click", function() {
+    detail.style.display = "none";
+    detail.innerHTML = "";
+    document.querySelectorAll(".corridor-card").forEach(function(el) {
+      el.classList.remove("active");
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+</script>
+</body>
+</html>

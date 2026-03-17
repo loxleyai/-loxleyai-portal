@@ -2,7 +2,7 @@
 
 Structured inventory of all repository contents, organized by category.
 
-*Generated: 2026-03-09*
+*Updated: 2026-03-17*
 
 ---
 
@@ -19,12 +19,14 @@ Structured inventory of all repository contents, organized by category.
 
 | File | Description |
 |------|-------------|
+| `index.html` | Complete portal — access gate, dashboard, corridor detail views (single-file app) |
+| `vercel.json` | Vercel routing config — SPA catch-all to index.html |
 | `.claude/agents/` | Custom Claude Code agent definitions (empty) |
 | `.claude/commands/` | Custom Claude Code slash commands (empty) |
 
 ## Brand Assets
 
-*No brand assets committed yet (logos, icons, fonts).*
+*No brand assets committed yet (logos, icons, fonts). Google Fonts loaded via CDN.*
 
 ## Client Deliverables
 
@@ -32,7 +34,7 @@ Structured inventory of all repository contents, organized by category.
 
 ## Data Files
 
-*No data files committed yet (JSON, CSV, datasets).*
+*All corridor data is hardcoded in the `CORRIDORS` array inside `index.html`.*
 
 ## Media
 
@@ -44,5 +46,5 @@ Structured inventory of all repository contents, organized by category.
 
 ---
 
-**Total files tracked**: 4
+**Total files tracked**: 6
 **Directories**: 2 (`.claude/agents/`, `.claude/commands/`)
