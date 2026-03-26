@@ -8,13 +8,25 @@ import {
 } from "../services/nycFinance.js";
 import { fetchListings, fetchRecentSales } from "../services/mls.js";
 
-// ── Default corridors (UES focus) ──────────────────────────────────────────
+// ── Default corridors ──────────────────────────────────────────────────────
 const DEFAULT_CORRIDORS = [
+  // UES — NYC
   "E 61st between 2nd and 3rd Ave",
   "E 62nd between 2nd and 3rd Ave",
   "E 63rd between Lexington and 3rd Ave",
   "E 65th between 2nd and 3rd Ave",
   "E 72nd between 2nd and 3rd Ave",
+  // Midwest — I-270 Corridor
+  "I-270 Corridor, Columbus OH",
+  "I-270 Corridor, Frederick MD",
+  "I-270 Corridor, Germantown MD",
+  // Southeast — Atlanta-Charlotte-Nashville
+  "Atlanta Midtown, GA",
+  "Charlotte South End, NC",
+  "Nashville Gulch, TN",
+  "Atlanta Buckhead, GA",
+  "Charlotte NoDa, NC",
+  "Nashville East, TN",
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -167,7 +179,7 @@ export default function PropertyCopilot_Demo({ session }) {
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-            <span style={{ color: "#64748b", fontSize: 13 }}>
+            <span style={{ color: "#64748b", fontSize: 13, whiteSpace: "nowrap" }}>
               {session?.user?.email}
             </span>
             <button
@@ -448,10 +460,10 @@ function PropertyDetail({ property: p }) {
                   <strong>{d.docType}</strong> — {d.recordedDate}
                 </div>
                 <div>Amount: {formatCurrency(d.amount)}</div>
-                <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                <div style={{ fontSize: 12, color: "#64748b" }}>
                   Grantor: {d.grantor}
                 </div>
-                <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                <div style={{ fontSize: 12, color: "#64748b" }}>
                   Grantee: {d.grantee}
                 </div>
               </div>
@@ -481,11 +493,11 @@ function PropertyDetail({ property: p }) {
 
           {p.exemptions && p.exemptions.length > 0 && (
             <>
-              <h5 style={{ color: "#f59e0b", margin: "8px 0 4px" }}>
+              <h5 style={{ color: "#d97706", margin: "8px 0 4px" }}>
                 Tax Exemptions
               </h5>
               {p.exemptions.map((ex, i) => (
-                <div key={i} style={{ fontSize: 12, color: "#94a3b8" }}>
+                <div key={i} style={{ fontSize: 12, color: "#64748b" }}>
                   {ex.exemptionDescription}: {formatCurrency(ex.exemptionAmount)}
                 </div>
               ))}
@@ -499,23 +511,23 @@ function PropertyDetail({ property: p }) {
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 const logColors = {
-  info: "#94a3b8",
-  fetch: "#60a5fa",
-  success: "#22c55e",
-  error: "#ef4444",
+  info: "#475569",
+  fetch: "#2563eb",
+  success: "#16a34a",
+  error: "#dc2626",
 };
 
 const styles = {
   container: {
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    background: "#0f172a",
-    color: "#e2e8f0",
+    background: "#f8fafc",
+    color: "#1e293b",
     minHeight: "100vh",
     padding: "24px",
   },
   header: {
-    borderBottom: "1px solid #1e293b",
+    borderBottom: "1px solid #e2e8f0",
     paddingBottom: 16,
     marginBottom: 24,
   },
@@ -523,7 +535,7 @@ const styles = {
     margin: 0,
     fontSize: 28,
     fontWeight: 700,
-    color: "#f8fafc",
+    color: "#0f172a",
   },
   subtitle: {
     margin: "4px 0 0",
@@ -540,24 +552,24 @@ const styles = {
   label: {
     fontWeight: 600,
     fontSize: 14,
-    color: "#94a3b8",
+    color: "#475569",
   },
   select: {
-    background: "#1e293b",
-    color: "#e2e8f0",
-    border: "1px solid #334155",
+    background: "#ffffff",
+    color: "#1e293b",
+    border: "1px solid #cbd5e1",
     borderRadius: 6,
     padding: "8px 12px",
     fontSize: 14,
   },
   or: {
-    color: "#475569",
+    color: "#94a3b8",
     fontSize: 13,
   },
   input: {
-    background: "#1e293b",
-    color: "#e2e8f0",
-    border: "1px solid #334155",
+    background: "#ffffff",
+    color: "#1e293b",
+    border: "1px solid #cbd5e1",
     borderRadius: 6,
     padding: "8px 12px",
     fontSize: 14,
@@ -565,7 +577,7 @@ const styles = {
     minWidth: 240,
   },
   button: {
-    background: "#3b82f6",
+    background: "#2563eb",
     color: "#fff",
     border: "none",
     borderRadius: 6,
@@ -575,14 +587,14 @@ const styles = {
     cursor: "pointer",
   },
   buttonDisabled: {
-    background: "#1e40af",
+    background: "#93c5fd",
     cursor: "not-allowed",
     opacity: 0.7,
   },
   signOutButton: {
     background: "none",
-    border: "1px solid #334155",
-    color: "#94a3b8",
+    border: "1px solid #cbd5e1",
+    color: "#64748b",
     borderRadius: 6,
     padding: "6px 14px",
     fontSize: 13,
@@ -594,9 +606,9 @@ const styles = {
     gap: 24,
   },
   logPanel: {
-    background: "#020617",
+    background: "#ffffff",
     borderRadius: 8,
-    border: "1px solid #1e293b",
+    border: "1px solid #e2e8f0",
     padding: 16,
     maxHeight: "80vh",
     overflowY: "auto",
@@ -608,10 +620,10 @@ const styles = {
     margin: "0 0 12px",
     fontSize: 16,
     fontWeight: 600,
-    color: "#f8fafc",
+    color: "#0f172a",
   },
   placeholder: {
-    color: "#475569",
+    color: "#94a3b8",
     fontStyle: "italic",
   },
   logEntry: {
@@ -619,7 +631,7 @@ const styles = {
     wordBreak: "break-word",
   },
   logTime: {
-    color: "#475569",
+    color: "#94a3b8",
   },
   resultsPanel: {
     overflowX: "auto",
@@ -632,8 +644,8 @@ const styles = {
   th: {
     textAlign: "left",
     padding: "8px 10px",
-    borderBottom: "2px solid #334155",
-    color: "#94a3b8",
+    borderBottom: "2px solid #e2e8f0",
+    color: "#64748b",
     fontWeight: 600,
     fontSize: 12,
     textTransform: "uppercase",
@@ -642,7 +654,7 @@ const styles = {
   },
   td: {
     padding: "8px 10px",
-    borderBottom: "1px solid #1e293b",
+    borderBottom: "1px solid #e2e8f0",
     verticalAlign: "top",
   },
   tableRow: {},
@@ -656,8 +668,8 @@ const styles = {
   },
   detailButton: {
     background: "none",
-    border: "1px solid #334155",
-    color: "#60a5fa",
+    border: "1px solid #cbd5e1",
+    color: "#2563eb",
     borderRadius: 4,
     padding: "3px 8px",
     fontSize: 11,
@@ -665,10 +677,10 @@ const styles = {
   },
   detailCell: {
     padding: 0,
-    borderBottom: "1px solid #1e293b",
+    borderBottom: "1px solid #e2e8f0",
   },
   detail: {
-    background: "#0f172a",
+    background: "#f1f5f9",
     padding: "16px 10px",
   },
   detailGrid: {
@@ -677,15 +689,16 @@ const styles = {
     gap: 20,
   },
   detailSection: {
-    background: "#1e293b",
+    background: "#ffffff",
     borderRadius: 6,
     padding: 12,
+    border: "1px solid #e2e8f0",
   },
   detailHeading: {
     margin: "0 0 8px",
     fontSize: 13,
     fontWeight: 600,
-    color: "#60a5fa",
+    color: "#2563eb",
   },
   dl: {
     margin: 0,
@@ -695,14 +708,15 @@ const styles = {
     gap: "4px 12px",
   },
   deedCard: {
-    background: "#0f172a",
+    background: "#f8fafc",
     borderRadius: 4,
     padding: 8,
     marginBottom: 6,
     fontSize: 12,
+    border: "1px solid #e2e8f0",
   },
   noData: {
-    color: "#475569",
+    color: "#94a3b8",
     fontSize: 12,
     fontStyle: "italic",
   },

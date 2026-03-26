@@ -188,8 +188,7 @@ export default function AccessGate({ onAuthenticated }) {
 const styles = {
   backdrop: {
     minHeight: "100vh",
-    background:
-      "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+    background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -198,24 +197,24 @@ const styles = {
     padding: 24,
   },
   card: {
-    background: "#1e293b",
-    border: "1px solid #334155",
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
     borderRadius: 12,
     padding: "48px 40px",
     maxWidth: 420,
     width: "100%",
     textAlign: "center",
-    boxShadow: "0 25px 50px rgba(0,0,0,0.4)",
+    boxShadow: "0 25px 50px rgba(0,0,0,0.08)",
   },
   logo: {
     fontSize: 13,
     fontWeight: 700,
     letterSpacing: "0.2em",
-    color: "#3b82f6",
+    color: "#2563eb",
     marginBottom: 8,
   },
   heading: {
-    color: "#f8fafc",
+    color: "#0f172a",
     fontSize: 24,
     fontWeight: 700,
     margin: "0 0 8px",
@@ -232,16 +231,16 @@ const styles = {
     gap: 12,
   },
   input: {
-    background: "#0f172a",
-    color: "#e2e8f0",
-    border: "1px solid #334155",
+    background: "#f8fafc",
+    color: "#0f172a",
+    border: "1px solid #cbd5e1",
     borderRadius: 8,
     padding: "14px 16px",
     fontSize: 15,
     outline: "none",
   },
   button: {
-    background: "#3b82f6",
+    background: "#2563eb",
     color: "#fff",
     border: "none",
     borderRadius: 8,
@@ -253,17 +252,17 @@ const styles = {
     marginTop: 4,
   },
   buttonDisabled: {
-    background: "#1e40af",
+    background: "#93c5fd",
     cursor: "not-allowed",
     opacity: 0.7,
   },
   error: {
-    color: "#ef4444",
+    color: "#dc2626",
     fontSize: 13,
     marginTop: 12,
   },
   success: {
-    color: "#22c55e",
+    color: "#16a34a",
     fontSize: 13,
     marginTop: 12,
   },
@@ -277,13 +276,13 @@ const styles = {
   link: {
     background: "none",
     border: "none",
-    color: "#60a5fa",
+    color: "#2563eb",
     fontSize: 13,
     cursor: "pointer",
     textDecoration: "underline",
     padding: 0,
   },
   dot: {
-    color: "#475569",
+    color: "#94a3b8",
   },
 };
