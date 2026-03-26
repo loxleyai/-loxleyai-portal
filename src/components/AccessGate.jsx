@@ -1,59 +1,175 @@
 import { useState } from "react";
-
-/**
- * Access code gate. Validates against a list of codes.
- * In production, set VITE_ACCESS_CODES as a comma-separated list in .env.
- * Falls back to a default demo code if not set.
- */
-const VALID_CODES = (import.meta.env.VITE_ACCESS_CODES || "LOXLEY2026,UES-INTEL,DEMO")
-  .split(",")
-  .map((c) => c.trim().toUpperCase());
+import { supabase } from "../supabaseClient.js";
 
 export default function AccessGate({ onAuthenticated }) {
-  const [code, setCode] = useState("");
+  const [mode, setMode] = useState("login"); // "login" | "signup" | "forgot"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [shaking, setShaking] = useState(false);
 
-  const handleSubmit = (e) => {
+  const shake = () => {
+    setShaking(true);
+    setTimeout(() => setShaking(false), 500);
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (VALID_CODES.includes(code.trim().toUpperCase())) {
-      sessionStorage.setItem("loxley_access", "1");
-      onAuthenticated();
+    setError("");
+    setLoading(true);
+
+    const { error: err } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+      shake();
     } else {
-      setError("Invalid access code");
-      setShaking(true);
-      setTimeout(() => setShaking(false), 500);
+      onAuthenticated();
     }
   };
 
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      shake();
+      return;
+    }
+
+    setLoading(true);
+
+    const { error: err } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+    });
+
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+      shake();
+    } else {
+      setMessage("Check your email for a confirmation link, then sign in.");
+      setMode("login");
+      setPassword("");
+    }
+  };
+
+  const handleForgot = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    setLoading(true);
+
+    const { error: err } = await supabase.auth.resetPasswordForEmail(
+      email.trim(),
+      { redirectTo: window.location.origin }
+    );
+
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+      shake();
+    } else {
+      setMessage("Password reset link sent. Check your email.");
+    }
+  };
+
+  const onSubmit =
+    mode === "login"
+      ? handleLogin
+      : mode === "signup"
+        ? handleSignup
+        : handleForgot;
+
   return (
     <div style={styles.backdrop}>
-      <div style={{ ...styles.card, animation: shaking ? "shake 0.4s ease" : "none" }}>
+      <div
+        style={{
+          ...styles.card,
+          animation: shaking ? "shake 0.4s ease" : "none",
+        }}
+      >
         <div style={styles.logo}>LOXLEY AI</div>
         <h2 style={styles.heading}>Corridor Intelligence Portal</h2>
         <p style={styles.sub}>
-          Subscriber-gated access to Watkins-scored real estate corridor data.
+          {mode === "login" && "Sign in to access Watkins-scored corridor data."}
+          {mode === "signup" && "Create your account to get started."}
+          {mode === "forgot" && "Enter your email to reset your password."}
         </p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
+        <form onSubmit={onSubmit} style={styles.form}>
           <input
-            type="text"
-            value={code}
-            onChange={(e) => { setCode(e.target.value); setError(""); }}
-            placeholder="Enter access code"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError("");
+            }}
+            placeholder="Email address"
             style={styles.input}
             autoFocus
+            required
           />
-          <button type="submit" style={styles.button}>
-            Enter Portal
+
+          {mode !== "forgot" && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
+              placeholder="Password"
+              style={styles.input}
+              required
+              minLength={6}
+            />
+          )}
+
+          <button type="submit" disabled={loading} style={{
+            ...styles.button,
+            ...(loading ? styles.buttonDisabled : {}),
+          }}>
+            {loading
+              ? "Please wait..."
+              : mode === "login"
+                ? "Sign In"
+                : mode === "signup"
+                  ? "Create Account"
+                  : "Send Reset Link"}
           </button>
         </form>
 
         {error && <p style={styles.error}>{error}</p>}
+        {message && <p style={styles.success}>{message}</p>}
 
-        <p style={styles.footer}>
-          Contact your account manager for access credentials.
-        </p>
+        <div style={styles.links}>
+          {mode === "login" && (
+            <>
+              <button onClick={() => { setMode("signup"); setError(""); setMessage(""); }} style={styles.link}>
+                Create an account
+              </button>
+              <span style={styles.dot}>&middot;</span>
+              <button onClick={() => { setMode("forgot"); setError(""); setMessage(""); }} style={styles.link}>
+                Forgot password?
+              </button>
+            </>
+          )}
+          {mode !== "login" && (
+            <button onClick={() => { setMode("login"); setError(""); setMessage(""); }} style={styles.link}>
+              Back to sign in
+            </button>
+          )}
+        </div>
       </div>
 
       <style>{`
@@ -72,11 +188,13 @@ export default function AccessGate({ onAuthenticated }) {
 const styles = {
   backdrop: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+    background:
+      "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     padding: 24,
   },
   card: {
@@ -119,9 +237,7 @@ const styles = {
     border: "1px solid #334155",
     borderRadius: 8,
     padding: "14px 16px",
-    fontSize: 16,
-    textAlign: "center",
-    letterSpacing: "0.1em",
+    fontSize: 15,
     outline: "none",
   },
   button: {
@@ -134,15 +250,40 @@ const styles = {
     fontWeight: 600,
     cursor: "pointer",
     transition: "background 0.2s",
+    marginTop: 4,
+  },
+  buttonDisabled: {
+    background: "#1e40af",
+    cursor: "not-allowed",
+    opacity: 0.7,
   },
   error: {
     color: "#ef4444",
     fontSize: 13,
     marginTop: 12,
   },
-  footer: {
-    color: "#475569",
-    fontSize: 12,
+  success: {
+    color: "#22c55e",
+    fontSize: 13,
+    marginTop: 12,
+  },
+  links: {
     marginTop: 24,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  link: {
+    background: "none",
+    border: "none",
+    color: "#60a5fa",
+    fontSize: 13,
+    cursor: "pointer",
+    textDecoration: "underline",
+    padding: 0,
+  },
+  dot: {
+    color: "#475569",
   },
 };

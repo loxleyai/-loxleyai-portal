@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { supabase } from "../supabaseClient.js";
 import { fetchPlutoData } from "../services/pluto.js";
 import { fetchAcrisDeeds } from "../services/acris.js";
 import {
@@ -27,7 +28,7 @@ function timestamp() {
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────
-export default function PropertyCopilot_Demo() {
+export default function PropertyCopilot_Demo({ session }) {
   const [corridor, setCorridor] = useState(DEFAULT_CORRIDORS[0]);
   const [customCorridor, setCustomCorridor] = useState("");
   const [logs, setLogs] = useState([]);
@@ -155,13 +156,28 @@ export default function PropertyCopilot_Demo() {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.title}>
-          Loxley AI — Property Copilot
-        </h1>
-        <p style={styles.subtitle}>
-          Real-time corridor intelligence from NYC OpenData, ACRIS, NYC Finance
-          &amp; MLS
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1 style={styles.title}>
+              Loxley AI — Property Copilot
+            </h1>
+            <p style={styles.subtitle}>
+              Real-time corridor intelligence from NYC OpenData, ACRIS, NYC Finance
+              &amp; MLS
+            </p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+            <span style={{ color: "#64748b", fontSize: 13 }}>
+              {session?.user?.email}
+            </span>
+            <button
+              onClick={() => supabase.auth.signOut()}
+              style={styles.signOutButton}
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* Corridor selector */}
@@ -562,6 +578,15 @@ const styles = {
     background: "#1e40af",
     cursor: "not-allowed",
     opacity: 0.7,
+  },
+  signOutButton: {
+    background: "none",
+    border: "1px solid #334155",
+    color: "#94a3b8",
+    borderRadius: 6,
+    padding: "6px 14px",
+    fontSize: 13,
+    cursor: "pointer",
   },
   content: {
     display: "grid",
