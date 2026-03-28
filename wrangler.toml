@@ -1,0 +1,21 @@
+name = "ohio-sos-scanner"
+main = "src/index.js"
+compatibility_date = "2024-09-25"
+
+# Cron triggers
+# Monday 1pm UTC = weekly search scan
+# 15th of month 1pm UTC = monthly bulk CSV ingest
+[triggers]
+crons = ["0 13 * * 1", "0 13 15 * *"]
+
+# Environment variables (non-secret) — set secrets via `wrangler secret put`
+# Required secrets:
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_KEY
+#   BRAVE_API_KEY
+#   SCAN_TOKEN
+#   RESEND_API_KEY    (optional — for email digests)
+#   ALERT_EMAIL       (optional — recipient for digests)
+#   AI_GATEWAY_URL    (optional — for AI-powered classification)
+#   AI_API_KEY        (optional — for AI-powered classification)
+#   AI_MODEL          (optional — defaults to gpt-4o-mini)
