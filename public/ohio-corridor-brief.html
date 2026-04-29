@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ohio Defense Corridor — A Loxley Brief</title>
+<meta name="description" content="The four-node lattice forming in parallel across Wright-Patterson, Pickaway County, Springfield-Beckley and Evendale. A Loxley Corridor Brief.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0E0C;
+  --ink-soft: #1A1815;
+  --vellum: #F5F1E8;
+  --cream: #FAF7EF;
+  --bone: #EAE3D2;
+  --espresso: #2A2017;
+  --gold: #B8924A;
+  --gold-bright: #D4A85C;
+  --terracotta: #B85B3D;
+  --moss: #3D4A2A;
+  --rule: rgba(15, 14, 12, 0.12);
+  --rule-strong: rgba(15, 14, 12, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--vellum);
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 16px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* TICKER */
+.ticker {
+  background: var(--ink);
+  color: var(--vellum);
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--gold);
+  position: relative;
+  z-index: 100;
+}
+.ticker-track { display: inline-block; animation: scroll 80s linear infinite; }
+.ticker-track span { margin: 0 32px; }
+.ticker-track .gold { color: var(--gold-bright); }
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(245, 241, 232, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--rule);
+  z-index: 99;
+  padding: 18px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-mark {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 14px;
+}
+.nav-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  gap: 24px;
+}
+.nav-meta .live::before {
+  content: '●';
+  color: var(--terracotta);
+  margin-right: 6px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* HERO */
+.hero { padding: 80px 48px 120px; position: relative; overflow: hidden; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: end;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: fadeUp 0.8s ease-out;
+}
+.hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
+.hero-headline {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(48px, 8vw, 124px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin-bottom: 24px;
+  animation: fadeUp 1s ease-out 0.1s backwards;
+}
+.hero-headline .italic { font-style: italic; font-weight: 400; color: var(--espresso); }
+.hero-headline .underline { position: relative; display: inline-block; }
+.hero-headline .underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0.08em;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+  animation: drawLine 1.2s ease-out 1.2s backwards;
+  transform-origin: left;
+}
+@keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.hero-right { padding-bottom: 16px; }
+.hero-blurb {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  line-height: 1.45;
+  font-weight: 300;
+  color: var(--ink-soft);
+  margin-bottom: 40px;
+  max-width: 520px;
+  animation: fadeUp 1s ease-out 0.3s backwards;
+}
+.hero-blurb em { font-style: italic; color: var(--terracotta); font-weight: 400; }
+.hero-cta-row { display: flex; gap: 16px; align-items: center; animation: fadeUp 1s ease-out 0.5s backwards; }
+.cta {
+  background: var(--ink);
+  color: var(--vellum);
+  padding: 18px 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cta:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); }
+.cta-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 18px 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.cta-ghost:hover { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+
+/* THESIS BAR */
+.thesis-bar { background: var(--ink); color: var(--vellum); padding: 60px 48px; position: relative; overflow: hidden; }
+.thesis-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+}
+.thesis-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 200px 1fr; gap: 80px; align-items: start; }
+.thesis-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-top: 12px;
+  border-top: 1px solid var(--gold);
+}
+.thesis-statement {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.thesis-statement strong { font-weight: 400; font-style: italic; color: var(--gold-bright); }
+
+/* STATS */
+.stats { padding: 120px 48px; background: var(--cream); }
+.stats-header {
+  max-width: 1400px;
+  margin: 0 auto 80px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 60px;
+  align-items: end;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 40px;
+}
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.section-title .italic { font-style: italic; color: var(--terracotta); }
+.stats-intro {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  line-height: 1.5;
+  font-weight: 300;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.stats-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+.stat { border-top: 1px solid var(--ink); padding: 28px 0 0; position: relative; }
+.stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-soft);
+  letter-spacing: 0.15em;
+  position: absolute;
+  top: -22px; left: 0;
+}
+.stat-figure {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(48px, 5vw, 84px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+}
+.stat-figure .unit { font-size: 0.45em; color: var(--gold); font-style: italic; font-weight: 400; }
+.stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  max-width: 90%;
+}
+.stat-label strong { color: var(--ink); font-weight: 700; }
+.stat.span-4 { grid-column: span 4; }
+.stat.span-6 { grid-column: span 6; }
+.stat.span-8 { grid-column: span 8; }
+.stat.span-12 { grid-column: span 12; }
+.stat.feature { background: var(--ink); color: var(--vellum); padding: 40px 36px 36px; border-top: none; }
+.stat.feature .stat-num { color: var(--gold); top: 16px; left: 36px; }
+.stat.feature .stat-label { color: rgba(245, 241, 232, 0.7); }
+.stat.feature .stat-label strong { color: var(--gold-bright); }
+
+/* COMPARISON */
+.comparison { padding: 120px 48px; background: var(--vellum); position: relative; }
+.comparison-inner { max-width: 1400px; margin: 0 auto; }
+.comparison-header { text-align: center; margin-bottom: 80px; }
+.comparison-header .section-eyebrow { justify-content: center; }
+.comparison-header .section-eyebrow::before { content: ''; }
+.comparison-header .section-title { max-width: 900px; margin: 0 auto; }
+.comparison-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--rule-strong); }
+.comp-card { padding: 48px 36px; border-right: 1px solid var(--rule-strong); position: relative; background: var(--cream); transition: background 0.4s ease; }
+.comp-card:last-child { border-right: none; }
+.comp-card:hover { background: var(--bone); }
+.comp-card.dayton { background: var(--ink); color: var(--vellum); }
+.comp-card.dayton:hover { background: var(--espresso); }
+.comp-city { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 32px; letter-spacing: -0.02em; margin-bottom: 4px; }
+.comp-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; }
+.comp-card.dayton .comp-tag { color: var(--gold-bright); }
+.comp-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+.comp-card.dayton .comp-row { border-bottom-color: rgba(245, 241, 232, 0.15); }
+.comp-row:last-child { border-bottom: none; }
+.comp-key { font-family: 'DM Sans', sans-serif; color: var(--ink-soft); font-weight: 400; font-size: 12px; letter-spacing: 0.02em; }
+.comp-card.dayton .comp-key { color: rgba(245, 241, 232, 0.6); }
+.comp-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 13px; letter-spacing: -0.01em; }
+.comp-price { margin-top: 32px; padding-top: 24px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; }
+.comp-card.dayton .comp-price { border-top-color: var(--gold); }
+.comp-price-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
+.comp-card.dayton .comp-price-label { color: var(--gold-bright); }
+.comp-price-val { font-family: 'Fraunces', serif; font-weight: 400; font-size: 26px; letter-spacing: -0.02em; }
+
+/* EDITORIAL */
+.editorial { padding: 140px 48px; background: var(--cream); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.editorial-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+.editorial-quote {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 40px;
+}
+.editorial-quote .italic { color: var(--terracotta); }
+.editorial-attribution {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* TIMELINE */
+.timeline { padding: 120px 48px; background: var(--vellum); }
+.timeline-inner { max-width: 1100px; margin: 0 auto; }
+.timeline-header { margin-bottom: 80px; }
+.timeline-list { list-style: none; }
+.timeline-item {
+  display: grid;
+  grid-template-columns: 80px 200px 1fr 140px;
+  gap: 40px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.timeline-year { font-family: 'Fraunces', serif; font-weight: 400; font-style: italic; font-size: 28px; color: var(--gold); letter-spacing: -0.02em; }
+.timeline-actor { font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; color: var(--ink); }
+.timeline-event { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+.timeline-figure { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); text-align: right; letter-spacing: 0.02em; font-weight: 500; }
+
+/* PITCH */
+.pitch { padding: 140px 48px 120px; background: var(--cream); }
+.pitch-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: start; }
+.pitch-headline {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin-bottom: 40px;
+}
+.pitch-headline .italic { font-style: italic; color: var(--terracotta); font-weight: 400; }
+.pitch-headline .gold { color: var(--gold); }
+.pitch-body { font-family: 'Fraunces', serif; font-size: 19px; line-height: 1.55; font-weight: 300; color: var(--ink-soft); margin-bottom: 24px; max-width: 620px; }
+.pitch-body strong { color: var(--ink); font-style: italic; font-weight: 400; }
+.pitch-callout { margin-top: 40px; padding: 28px 32px; background: var(--ink); color: var(--vellum); position: relative; }
+.pitch-callout::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--gold); }
+.pitch-callout-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.pitch-callout-text { font-family: 'Fraunces', serif; font-size: 22px; line-height: 1.4; font-weight: 300; }
+.pitch-card { background: var(--ink); color: var(--vellum); padding: 48px 40px; border-top: 4px solid var(--gold); position: sticky; top: 100px; }
+.pitch-card-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+.pitch-card-title { font-family: 'Fraunces', serif; font-weight: 400; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 32px; }
+.pitch-card-list { list-style: none; }
+.pitch-card-list li { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-bottom: 1px solid rgba(245, 241, 232, 0.15); font-size: 13px; }
+.pitch-card-list li:last-child { border-bottom: none; }
+.pitch-card-list .label { color: rgba(245, 241, 232, 0.6); font-family: 'DM Sans', sans-serif; }
+.pitch-card-list .val { color: var(--gold-bright); font-family: 'JetBrains Mono', monospace; font-weight: 500; letter-spacing: -0.01em; }
+
+/* FINAL CTA */
+.final-cta { padding: 140px 48px; background: var(--ink); color: var(--vellum); text-align: center; position: relative; overflow: hidden; }
+.final-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.final-cta-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 40px; }
+.final-cta-headline {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(56px, 9vw, 144px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  margin-bottom: 60px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.final-cta-headline .italic { font-style: italic; color: var(--gold-bright); }
+.final-cta-sub {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: rgba(245, 241, 232, 0.7);
+  margin-bottom: 60px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 300;
+}
+.final-cta-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.cta-light { background: var(--vellum); color: var(--ink); padding: 22px 44px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 14px; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.cta-light:hover { background: var(--gold-bright); transform: translateY(-2px); }
+.cta-outline { background: transparent; color: var(--vellum); padding: 22px 44px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; border: 1px solid var(--gold); display: inline-flex; align-items: center; gap: 14px; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.cta-outline:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* FOOTER */
+footer { padding: 60px 48px 40px; background: var(--ink); color: rgba(245, 241, 232, 0.5); border-top: 1px solid rgba(184, 146, 74, 0.2); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
+.footer-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+.footer-mark { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; text-transform: none; letter-spacing: -0.01em; color: var(--gold-bright); }
+.arrow { display: inline-block; transition: transform 0.3s ease; }
+.cta:hover .arrow, .cta-light:hover .arrow, .cta-outline:hover .arrow { transform: translateX(4px); }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .hero-grid, .stats-header, .pitch-grid, .thesis-content { grid-template-columns: 1fr; gap: 40px; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .comp-card { border-right: none; border-bottom: 1px solid var(--rule-strong); }
+  .timeline-item { grid-template-columns: 80px 1fr; gap: 20px; }
+  .timeline-actor, .timeline-event, .timeline-figure { grid-column: 2; text-align: left; }
+  .stat.span-4, .stat.span-6, .stat.span-8 { grid-column: span 6; }
+  .pitch-card { position: relative; top: 0; }
+}
+@media (max-width: 640px) {
+  .hero, .stats, .comparison, .editorial, .timeline, .pitch, .final-cta { padding-left: 24px; padding-right: 24px; }
+  .nav { padding: 16px 24px; }
+  .nav-meta { display: none; }
+  .stat.span-4, .stat.span-6, .stat.span-8 { grid-column: span 12; }
+  .timeline-item { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="gold">●</span> <span>ANDURIL ARSENAL-1 · 5M SQ FT</span>
+    <span class="gold">●</span> <span>AFRL AMAC · $10B IDIQ</span>
+    <span class="gold">●</span> <span>NASIC IPC III · 255K SQ FT SCIF</span>
+    <span class="gold">●</span> <span>GE EVENDALE · TITLE III DPA</span>
+    <span class="gold">●</span> <span>178TH WING · CYBER &amp; ISR</span>
+    <span class="gold">●</span> <span>WPAFB · LARGEST OHIO EMPLOYER</span>
+    <span class="gold">●</span> <span>CW INDUSTRIAL · LIBRA POSITION</span>
+    <span class="gold">●</span> <span>DEFENSE CAPITAL · $1.2B / 36 MO</span>
+    <span class="gold">●</span> <span>ANDURIL ARSENAL-1 · 5M SQ FT</span>
+    <span class="gold">●</span> <span>AFRL AMAC · $10B IDIQ</span>
+    <span class="gold">●</span> <span>NASIC IPC III · 255K SQ FT SCIF</span>
+    <span class="gold">●</span> <span>GE EVENDALE · TITLE III DPA</span>
+    <span class="gold">●</span> <span>178TH WING · CYBER &amp; ISR</span>
+    <span class="gold">●</span> <span>WPAFB · LARGEST OHIO EMPLOYER</span>
+    <span class="gold">●</span> <span>CW INDUSTRIAL · LIBRA POSITION</span>
+    <span class="gold">●</span> <span>DEFENSE CAPITAL · $1.2B / 36 MO</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand">
+    <div class="brand-mark">OH</div>
+    <span>The Ohio Defense Corridor</span>
+  </div>
+  <div class="nav-meta">
+    <span class="live">CORRIDOR LIVE</span>
+    <span>BRIEF 05</span>
+    <span>POSITION 90</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Ohio Defense Corridor · A Loxley Corridor Brief</div>
+      <h1 class="hero-headline">
+        Four anchors.<br>
+        <span class="italic">Forming in</span><br>
+        <span class="italic">parallel.</span><br>
+        <span class="underline">Pre-trade prices.</span>
+      </h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-blurb">
+        Wright-Patterson. Pickaway County. Springfield-Beckley. Evendale. The four-node lattice institutional capital hasn't priced yet.
+        <em>Three windows still open. One closing first.</em>
+      </p>
+      <div class="hero-cta-row">
+        <a href="#thesis" class="cta">Read the brief <span class="arrow">→</span></a>
+        <a href="#stats" class="cta-ghost">See the numbers</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS BAR -->
+<section class="thesis-bar" id="thesis">
+  <div class="thesis-content">
+    <div class="thesis-label">The Thesis</div>
+    <p class="thesis-statement">
+      Every defense corridor needs at least one signal of national-strategic magnitude to clear the threshold for thesis weight. <strong>Ohio has four operating in parallel</strong>, each on a different programmatic axis. The combination is what produces the lattice effect.
+    </p>
+  </div>
+</section>
+
+<!-- STATS GRID -->
+<section class="stats" id="stats">
+  <div class="stats-header">
+    <div>
+      <div class="section-eyebrow">By the numbers</div>
+      <h2 class="section-title">What the lattice <span class="italic">looks like.</span></h2>
+    </div>
+    <p class="stats-intro">
+      These aren't projections. These are figures sitting in plain sight on federal procurement records, JobsOhio releases and base announcements — and somehow institutional capital still thinks the Ohio defense story is just Wright-Patt.
+    </p>
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat feature span-8">
+      <div class="stat-num">01 / Production anchor</div>
+      <div class="stat-figure">5M<span class="unit">sq ft</span></div>
+      <div class="stat-label">Anduril Arsenal-1 hyperscale autonomous-weapons campus in Pickaway County. <strong>Largest single job-creation project in Ohio history.</strong> Building 1 in production. Building 2 raising walls.</div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">02 / Research procurement</div>
+      <div class="stat-figure">$10<span class="unit">B</span></div>
+      <div class="stat-label">AFRL AMAC IDIQ ceiling. Five-year base plus three options. <strong>Forces contractor expansion through 2031.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">03 / Intelligence anchor</div>
+      <div class="stat-figure">$156<span class="unit">M</span></div>
+      <div class="stat-label">NASIC IPC III SCIF facility — 255,000 sq ft at Wright-Patt. <strong>3,300 personnel · $450M annual budget.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">04 / Propulsion industrial base</div>
+      <div class="stat-figure">$5<span class="unit">B</span></div>
+      <div class="stat-label">GE Aerospace F110 IDIQ + Title III DPA hypersonics test infrastructure. <strong>Federal industrial-base-essential designation.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">05 / Permanent workforce</div>
+      <div class="stat-figure">4,008<span class="unit">jobs</span></div>
+      <div class="stat-label">Anduril hire commitment by 2035. <strong>Largest permanent defense workforce build in Ohio history.</strong></div>
+    </div>
+
+    <div class="stat feature span-6">
+      <div class="stat-num">06 / Sierra Nevada Corp</div>
+      <div class="stat-figure">650K<span class="unit">sq ft</span></div>
+      <div class="stat-label">SNC Dayton campus by early 2026 — three operational hangars, two more under construction. <strong>SAOC program. Strategic command-and-continuity-of-government tier work.</strong></div>
+    </div>
+
+    <div class="stat span-6">
+      <div class="stat-num">07 / Defense capital landed</div>
+      <div class="stat-figure">$1.2<span class="unit">B</span></div>
+      <div class="stat-label">Aerospace and defense investment landed in Ohio in 36 months. <strong>Anduril. Joby. SNC. GE.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">08 / State commitment</div>
+      <div class="stat-figure">$762<span class="unit">M</span></div>
+      <div class="stat-label">Combined Ohio incentives committed to Arsenal-1 alone. <strong>JobsOhio plus tax credits, structured against permanent workforce.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">09 / WPAFB workforce</div>
+      <div class="stat-figure">38<span class="unit">K</span></div>
+      <div class="stat-label">Wright-Patterson AFB employees. <strong>Largest single-site employer in the State of Ohio.</strong></div>
+    </div>
+
+    <div class="stat span-4">
+      <div class="stat-num">10 / Hospitality window</div>
+      <div class="stat-figure">0–9<span class="unit">months</span></div>
+      <div class="stat-label">Pickaway County hospitality window before competing developers file. <strong>Land basis still pre-Anduril repricing.</strong></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comparison">
+  <div class="comparison-inner">
+    <div class="comparison-header">
+      <div class="section-eyebrow">The mispricing</div>
+      <h2 class="section-title">Same trade. <span class="italic">Different cycle.</span></h2>
+    </div>
+
+    <div class="comparison-grid">
+
+      <div class="comp-card">
+        <div class="comp-city">Huntsville</div>
+        <div class="comp-tag">Madison Co · AL · Late cycle</div>
+        <div class="comp-row"><span class="comp-key">Federal R&amp;D anchor</span><span class="comp-val">Redstone Arsenal</span></div>
+        <div class="comp-row"><span class="comp-key">Defense ecosystem</span><span class="comp-val">Mature · 38K cleared</span></div>
+        <div class="comp-row"><span class="comp-key">Hospitality cap rates</span><span class="comp-val">~7.0% (compressed)</span></div>
+        <div class="comp-row"><span class="comp-key">Class A office</span><span class="comp-val">~$32 / sq ft</span></div>
+        <div class="comp-price">
+          <span class="comp-price-label">Median home</span>
+          <span class="comp-price-val">$340K</span>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-city">Phoenix</div>
+        <div class="comp-tag">Maricopa · AZ · Mid cycle</div>
+        <div class="comp-row"><span class="comp-key">Federal R&amp;D anchor</span><span class="comp-val">TSMC fabs</span></div>
+        <div class="comp-row"><span class="comp-key">Defense ecosystem</span><span class="comp-val">Semiconductor · CHIPS</span></div>
+        <div class="comp-row"><span class="comp-key">Hospitality cap rates</span><span class="comp-val">~7.5% (repricing)</span></div>
+        <div class="comp-row"><span class="comp-key">Class A office</span><span class="comp-val">~$36 / sq ft</span></div>
+        <div class="comp-price">
+          <span class="comp-price-label">Median home</span>
+          <span class="comp-price-val">$430K</span>
+        </div>
+      </div>
+
+      <div class="comp-card dayton">
+        <div class="comp-city">Ohio Corridor</div>
+        <div class="comp-tag">WPAFB · Pickaway · Pre-trade</div>
+        <div class="comp-row"><span class="comp-key">Federal R&amp;D anchor</span><span class="comp-val">AFRL · $4B / yr</span></div>
+        <div class="comp-row"><span class="comp-key">Defense ecosystem</span><span class="comp-val">Lattice · 4 anchors</span></div>
+        <div class="comp-row"><span class="comp-key">Hospitality cap rates</span><span class="comp-val">~9.0% (pre-trade)</span></div>
+        <div class="comp-row"><span class="comp-key">Class A office</span><span class="comp-val">~$22 / sq ft</span></div>
+        <div class="comp-price">
+          <span class="comp-price-label">Median home</span>
+          <span class="comp-price-val">$215K</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL QUOTE -->
+<section class="editorial">
+  <div class="editorial-inner">
+    <p class="editorial-quote">
+      No single Ohio anchor would justify the corridor thesis on its own. The four operating in parallel produce signal redundancy <span class="italic">that survives single-program risk.</span>
+    </p>
+    <div class="editorial-attribution">
+      Loxley Commercial · Corridor Brief 05
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline">
+  <div class="timeline-inner">
+    <div class="timeline-header">
+      <div class="section-eyebrow">The cascade in real time</div>
+      <h2 class="section-title">What's already <span class="italic">landed.</span></h2>
+    </div>
+
+    <ul class="timeline-list">
+      <li class="timeline-item">
+        <div class="timeline-year">2017</div>
+        <div class="timeline-actor">CW Industrial</div>
+        <div class="timeline-event">Acquires GEMCITY Engineering &amp; Manufacturing in Dayton — 85-year-old precision machining heritage. The platform position assembled before the reindustrialization wave.</div>
+        <div class="timeline-figure">Dayton entry</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-actor">GE Aerospace</div>
+        <div class="timeline-event">Acquires Innoveering — hypersonic propulsion specialist integrated into Evendale test platform.</div>
+        <div class="timeline-figure">Hypersonics anchor</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-actor">NASIC IPC III</div>
+        <div class="timeline-event">Ribbon-cut on five-story 255,000 sq ft SCIF facility at Wright-Patt. Largest single Wright-Patt construction in nine years.</div>
+        <div class="timeline-figure">$156M</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-actor">SNC · Dayton</div>
+        <div class="timeline-event">Second Sierra Nevada hangar opens at Dayton International. SAOC program ramps. Two more hangars break ground.</div>
+        <div class="timeline-figure">650K sq ft total</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-actor">Anduril Arsenal-1</div>
+        <div class="timeline-event">JobsOhio lands hyperscale autonomous-weapons facility. State commits $310M JobsOhio + $452.2M tax credits.</div>
+        <div class="timeline-figure">5M sq ft · 4,008 jobs</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-actor">GE Aerospace</div>
+        <div class="timeline-event">$5B F110-GE-129 IDIQ awarded. Evendale upgrades for higher-Mach hypersonic propulsion testing under Title III DPA.</div>
+        <div class="timeline-figure">$5B IDIQ</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-actor">Resonant · CFD</div>
+        <div class="timeline-event">Resonant Sciences breaks ground on fifth Beavercreek building. CFD Research buys its Beavercreek HQ outright.</div>
+        <div class="timeline-figure">Foreign-state buy-in</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-actor">AFRL AMAC IDIQ</div>
+        <div class="timeline-event">Draft RFP issued for $10B research contract vehicle. Five-year base plus three options. Forces contractor decisions through 2031.</div>
+        <div class="timeline-figure">$10B ceiling</div>
+      </li>
+      <li class="timeline-item">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-actor">Anduril · Q1</div>
+        <div class="timeline-event">First YFQ-44A autonomous fighter rolls off the Pickaway County line. Production opens ahead of schedule and under budget.</div>
+        <div class="timeline-figure">Production live</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- THE PITCH -->
+<section class="pitch">
+  <div class="pitch-grid">
+    <div>
+      <h2 class="pitch-headline">
+        Cambridge<br>
+        <span class="italic">research.</span><br>
+        Hyperscale<br>
+        <span class="gold">production.</span><br>
+        Pre-trade<br>
+        prices.
+      </h2>
+      <p class="pitch-body">
+        The federal R&amp;D density of an Ivy town. The aerospace heritage of a coastal capital. The autonomous-weapons production capacity of a generational industrial buildout. <strong>Priced like the world hasn't been paying attention yet.</strong>
+      </p>
+      <p class="pitch-body">
+        The cascade is already running. Jobs are landing across all four nodes. Hospitality is visibly under-supplied in Pickaway. Industrial flex is forming at the supplier-cluster radius. Multifamily is still asleep. Price discovery in real estate has not yet caught up with the federal commitment depth.
+      </p>
+      <div class="pitch-callout">
+        <div class="pitch-callout-label">The arbitrage</div>
+        <p class="pitch-callout-text">
+          Buy the corridor before the named consolidation catalyst confirms repricing. By the time the trade is obvious, it's gone.
+        </p>
+      </div>
+    </div>
+
+    <div class="pitch-card">
+      <div class="pitch-card-eyebrow">The corridor file</div>
+      <h3 class="pitch-card-title">Ohio Defense Corridor —<br>WPAFB · Pickaway · Springfield · Evendale</h3>
+      <ul class="pitch-card-list">
+        <li><span class="label">Loxley Corridor Score</span><span class="val">90 / 100</span></li>
+        <li><span class="label">Cascade phase</span><span class="val">1–3 active</span></li>
+        <li><span class="label">Federal anchors</span><span class="val">4 in parallel</span></li>
+        <li><span class="label">Demand drivers</span><span class="val">Defense · ISR · Hyper</span></li>
+        <li><span class="label">Capital landed (24 mo)</span><span class="val">$3.2B+</span></li>
+        <li><span class="label">Named catalyst</span><span class="val">CW · Libra exit</span></li>
+        <li><span class="label">Status</span><span class="val">Open · Brief 05</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="final-cta-eyebrow">— Loxley Commercial —</div>
+  <h2 class="final-cta-headline">
+    Get the full brief.<br>
+    <span class="italic">Or read about<br>the trade in the<br>Times in 2027.</span>
+  </h2>
+  <p class="final-cta-sub">
+    The full Ohio Defense Corridor Brief sits gated at loxleyai.io — sub-corridor scoring, target asset profile, capital deployment windows and the underwriting model across all four nodes.
+  </p>
+  <div class="final-cta-row">
+    <a href="https://loxleyai.io/ohio-corridor-brief-full.html" class="cta-light">
+      Request the full brief <span class="arrow">→</span>
+    </a>
+    <a href="#" class="cta-outline">
+      Subscribe to Corridor Signal <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div><span class="footer-mark">House of Loxley Holdings</span></div>
+    <div>The Ohio Defense Corridor · Brief 05 · Corridor Open</div>
+    <div>© 2026 · All Rights Reserved</div>
+  </div>
+</footer>
+
+</body>
+</html>
